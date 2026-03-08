@@ -77,7 +77,7 @@ class NormalizedProduct(BaseModel):
     """
 
     # ── IDENTITY ──────────────────────────────────────────────────────────────
-    product_id: str                               # md5(source_site + product_url)
+    product_id: str = ""                          # auto-generated: md5(source_site + product_url)
     source_site: str                              # "renuar" | "zara" | ...
     source_name: str                              # "Renuar" | "Zara Israel" | ...
     product_url: str
@@ -173,6 +173,10 @@ class NormalizedProduct(BaseModel):
 
     @model_validator(mode="after")
     def _compute_derived(self) -> "NormalizedProduct":
+        # Auto-generate product_id if not provided
+        if not self.product_id:
+            self.product_id = self.__class__.make_id(self.source_site, self.product_url)
+
         # image_count
         self.image_count = len(self.image_urls)
         if self.image_urls and not self.primary_image_url:
@@ -232,3 +236,29 @@ class NormalizedProduct(BaseModel):
         d = self.model_dump()
         d["color_variant_objects"] = [v.model_dump() for v in self.color_variant_objects]
         return d
+
+    @property
+    def completeness_score(self) -> float:
+        """
+        0–1 score of how complete this product record is.
+        Based on 10 key fields: name, price, images, category, description,
+        sizes, colors, brand, stock status, and identity reference.
+        """
+        checks = [
+            bool(self.product_name),
+            bool(self.current_price),
+            bool(self.image_urls),
+            bool(self.category),
+            bool(self.short_description or self.original_description),
+            bool(self.sizes_available or self.color_variant_objects),
+            bool(self.colors_available),
+            bool(self.brand),
+            self.stock_status != "unknown",
+            bool(self.sku_if_available or self.source_product_reference),
+        ]
+        return round(sum(checks) / len(checks), 2)
+
+    @property
+    def is_valid(self) -> bool:
+        """True if the product has the minimum required fields."""
+        return bool(self.product_name and self.product_url and self.source_site)
