@@ -84,11 +84,18 @@ def find_breadcrumbs_json_ld(json_ld_blocks: list[dict]) -> list[str]:
         types = [t] if isinstance(t, str) else t
         if "BreadcrumbList" in types:
             items = block.get("itemListElement", [])
-            return [
-                item.get("name", item.get("item", {}).get("name", ""))
-                for item in items
-                if isinstance(item, dict)
-            ]
+            crumbs = []
+            for item in items:
+                if not isinstance(item, dict):
+                    continue
+                name = item.get("name", "")
+                if not name:
+                    sub = item.get("item", {})
+                    if isinstance(sub, dict):
+                        name = sub.get("name", "")
+                if name:
+                    crumbs.append(name)
+            return crumbs
     return []
 
 

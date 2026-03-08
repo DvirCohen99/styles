@@ -1,0 +1,29 @@
+{
+  "product": {
+    "id": 7823456789,
+    "title": "חולצת פשתן קצרה",
+    "handle": "ofek-linen-shirt",
+    "product_type": "חולצות",
+    "vendor": "Renuar",
+    "body_html": "<p>חולצה קצרה עשויה 100% פשתן. גזרה רפויה ונוחה לקיץ. כולל קישוטי כפתורים.</p><ul><li>100% פשתן</li><li>גזרה קלאסית</li><li>שטיפת מכונה 30°</li></ul>",
+    "tags": ["new-arrival", "women", "linen", "summer", "shirts"],
+    "options": [
+      {"id": 10001, "name": "מידה", "values": ["XS", "S", "M", "L", "XL"]},
+      {"id": 10002, "name": "צבע", "values": ["לבן שביר", "בז'", "ירוק מנטה"]}
+    ],
+    "variants": [
+      {"id": 111001, "sku": "REN-LIN-XS-W", "price": "159.00", "compare_at_price": "229.00", "available": true,  "option1": "XS", "option2": "לבן שביר", "barcode": "7290011001"},
+      {"id": 111002, "sku": "REN-LIN-S-W",  "price": "159.00", "compare_at_price": "229.00", "available": true,  "option1": "S",  "option2": "לבן שביר", "barcode": "7290011002"},
+      {"id": 111003, "sku": "REN-LIN-M-W",  "price": "159.00", "compare_at_price": "229.00", "available": false, "option1": "M",  "option2": "לבן שביר", "barcode": "7290011003"},
+      {"id": 111004, "sku": "REN-LIN-XS-B", "price": "159.00", "compare_at_price": "229.00", "available": true,  "option1": "XS", "option2": "בז'",      "barcode": "7290011004"},
+      {"id": 111005, "sku": "REN-LIN-S-G",  "price": "159.00", "compare_at_price": "229.00", "available": true,  "option1": "S",  "option2": "ירוק מנטה","barcode": "7290011005"}
+    ],
+    "images": [
+      {"id": 2001, "src": "https://cdn.shopify.com/s/files/1/0123/4567/products/renuar_linen_shirt_front.jpg"},
+      {"id": 2002, "src": "https://cdn.shopify.com/s/files/1/0123/4567/products/renuar_linen_shirt_back.jpg"},
+      {"id": 2003, "src": "https://cdn.shopify.com/s/files/1/0123/4567/products/renuar_linen_shirt_detail.jpg"}
+    ],
+    "created_at": "2024-03-01T10:00:00+02:00",
+    "published_at": "2024-03-01T10:00:00+02:00"
+  }
+}

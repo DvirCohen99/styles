@@ -1,0 +1,47 @@
+{
+  "id": 310073139,
+  "name": "שמלת מיני ריב",
+  "description": "שמלת מיני בסריגת ריב. מחשוף V עם קשירה בגב. גזרה צמודה לגוף.",
+  "price": 15990,
+  "originalPrice": 0,
+  "seoKeyword": "ribbed-mini-dress",
+  "detail": {
+    "colors": [
+      {
+        "id": "851",
+        "name": "CORAL",
+        "xmedia": [
+          {"path": "2024/V/0810/310/073/139/2/w", "name": "2024V0810310073139_2_1_0", "datatype": "i", "timestamp": 1711000000},
+          {"path": "2024/V/0810/310/073/139/2/w", "name": "2024V0810310073139_2_2_0", "datatype": "i", "timestamp": 1711000001},
+          {"path": "2024/V/0810/310/073/139/2/w", "name": "2024V0810310073139_2_3_0", "datatype": "i", "timestamp": 1711000002}
+        ],
+        "sizes": [
+          {"id": "XXS-851", "name": "XXS", "availability": 1, "sku": "03100731398510"},
+          {"id": "XS-851",  "name": "XS",  "availability": 1, "sku": "03100731398511"},
+          {"id": "S-851",   "name": "S",   "availability": 1, "sku": "03100731398512"},
+          {"id": "M-851",   "name": "M",   "availability": 0, "sku": "03100731398513"},
+          {"id": "L-851",   "name": "L",   "availability": 0, "sku": "03100731398514"}
+        ],
+        "mainColorHexCode": "#FF7F6E"
+      },
+      {
+        "id": "712",
+        "name": "BLACK",
+        "xmedia": [
+          {"path": "2024/V/0810/310/073/139/7/w", "name": "2024V0810310073139_7_1_0", "datatype": "i", "timestamp": 1711000010}
+        ],
+        "sizes": [
+          {"id": "XS-712",  "name": "XS",  "availability": 1, "sku": "03100731397121"},
+          {"id": "S-712",   "name": "S",   "availability": 1, "sku": "03100731397122"},
+          {"id": "M-712",   "name": "M",   "availability": 1, "sku": "03100731397123"},
+          {"id": "L-712",   "name": "L",   "availability": 1, "sku": "03100731397124"}
+        ],
+        "mainColorHexCode": "#1A1A1A"
+      }
+    ]
+  },
+  "sectionName": "WOMAN",
+  "familyName": "DRESSES",
+  "subfamilyName": "MIDI DRESSES",
+  "conceptIds": [{"id": "3500", "name": "WOMAN"}]
+}
