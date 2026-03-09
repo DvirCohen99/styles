@@ -189,12 +189,15 @@ class CStyleAdapter(BaseAdapter):
             if ld:
                 partial = parse_product_from_json_ld(ld)
                 partial["breadcrumbs"] = find_breadcrumbs_json_ld(raw.json_ld_data)
+                # JSON-LD alone misses sizes, colors, category — enrich from HTML
+                self._enrich_from_dom(raw, partial)
+                partial.setdefault("brand", "CStyle")
                 raw.extraction_method = "json_ld"
                 product = self.normalize(raw, partial)
                 return ParseResult(
                     success=True, product_url=raw.product_url,
                     source_site=raw.source_site, product=product,
-                    extraction_method="json_ld", confidence=0.88,
+                    extraction_method="json_ld", confidence=0.92,
                 )
 
         # 3. DOM fallback (WooCommerce standard selectors)
@@ -257,6 +260,58 @@ class CStyleAdapter(BaseAdapter):
             "in_stock": data.get("in_stock", True),
             "out_of_stock": not data.get("in_stock", True),
         }
+
+    def _enrich_from_dom(self, raw: RawProductPayload, partial: dict) -> None:
+        """Supplement JSON-LD (or WC API) data with DOM-extracted sizes, colors, category."""
+        if not raw.html_snapshot:
+            return
+        from engine.extraction.dom_selector import DOMExtractor
+        dom = DOMExtractor(raw.html_snapshot)
+
+        # Sizes from WooCommerce size variation select
+        if not partial.get("sizes_available"):
+            sizes = dom.texts(
+                "select[name*='pa_size'] option:not([value=''])",
+                "select[name*='size'] option:not([value=''])",
+                ".variations [data-attribute*='size'] li",
+            )
+            if sizes:
+                partial["sizes_available"] = normalize_sizes(sizes)
+
+        # Colors from WooCommerce colour variation select
+        if not partial.get("colors_available"):
+            colors = dom.texts(
+                "select[name*='pa_colour'] option:not([value=''])",
+                "select[name*='colour'] option:not([value=''])",
+                "select[name*='color'] option:not([value=''])",
+            )
+            if colors:
+                partial["colors_available"] = normalize_colors(colors)
+
+        # Category from breadcrumbs (second-to-last crumb is category)
+        if not partial.get("category"):
+            crumbs = partial.get("breadcrumbs") or []
+            if len(crumbs) >= 2:
+                partial["category"] = crumbs[-2]
+            elif not crumbs:
+                # Try DOM breadcrumbs
+                dom_crumbs = dom.extract_breadcrumbs()
+                if len(dom_crumbs) >= 2:
+                    partial["category"] = dom_crumbs[-2]
+                    if not partial.get("breadcrumbs"):
+                        partial["breadcrumbs"] = dom_crumbs
+
+        # Original price from DOM if not in JSON-LD
+        if not partial.get("original_price"):
+            orig = dom.extract_price(".price del .woocommerce-Price-amount")
+            if orig:
+                partial["original_price"] = orig
+
+        # Short description from WooCommerce dedicated field
+        if not partial.get("short_description"):
+            short = dom.text(".woocommerce-product-details__short-description")
+            if short:
+                partial["short_description"] = normalize_text(short)[:300]
 
     def _parse_wc_dom(self, raw: RawProductPayload) -> ParseResult:
         """WooCommerce standard DOM selectors."""

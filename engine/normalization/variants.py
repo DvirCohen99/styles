@@ -18,9 +18,6 @@ SIZE_MAP: dict[str, str] = {
     # Hebrew
     "קטן מאוד": "XS", "קטן": "S", "בינוני": "M",
     "גדול": "L", "גדול מאוד": "XL",
-    # Numeric to alpha
-    "32": "XXS", "34": "XS", "36": "S", "38": "M",
-    "40": "L", "42": "XL", "44": "XXL", "46": "XXXL",
     # One size
     "one size": "ONE SIZE", "os": "ONE SIZE", "one": "ONE SIZE",
     "מידה אחת": "ONE SIZE",

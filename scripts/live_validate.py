@@ -322,6 +322,63 @@ def _compute_status(r: SourceResult) -> str:
     return "PASS"
 
 
+# Strict completeness grade — independent of parse success/failure
+CRITICAL_FIELDS = [
+    ("product_name",    "name"),
+    ("current_price",   "price"),
+    ("image_urls",      "images"),
+    ("category",        "category"),
+    ("sizes_available", "sizes"),
+    ("colors_available","colors"),
+    ("brand",           "brand"),
+    ("stock_status",    "stock"),
+    ("sku_if_available","sku/ref"),
+    ("short_description","desc"),
+]
+
+
+def _grade(r: SourceResult) -> str:
+    """FULL ≥95% | STRONG 85-94% | PARTIAL 60-84% | BLOCKED <60% or fatal error."""
+    if not r.adapter_ok or not r.parse_ok or r.blockers:
+        return "BLOCKED"
+    c = r.product.completeness_score if r.product else 0.0
+    if c >= 0.95:
+        return "FULL"
+    if c >= 0.85:
+        return "STRONG"
+    if c >= 0.60:
+        return "PARTIAL"
+    return "BLOCKED"
+
+
+def _missing_fields(r: SourceResult) -> str:
+    """
+    Return comma-separated list of missing critical fields.
+    Uses the exact same logic as NormalizedProduct.completeness_score
+    so the column is consistent with the completeness % shown.
+    """
+    if not r.product:
+        return "no product"
+    p = r.product
+    missing = []
+    checks = [
+        (not p.product_name,                                          "name"),
+        (not p.current_price,                                         "price"),
+        (not p.image_urls,                                            "images"),
+        (not p.category,                                              "category"),
+        (not (p.short_description or p.original_description),        "description"),
+        (not (p.sizes_available or p.color_variant_objects),         "sizes"),
+        (not p.colors_available,                                      "colors"),
+        (not p.brand,                                                 "brand"),
+        (p.stock_status == "unknown",                                 "stock"),
+        (not (p.sku_if_available or p.source_product_reference),     "sku/ref"),
+    ]
+    for failed, label in checks:
+        if failed:
+            missing.append(label)
+    return ", ".join(missing) if missing else "—"
+
+
 # ──────────────────────────────────────────────────────────────────────────────
 # Output helpers
 # ──────────────────────────────────────────────────────────────────────────────
@@ -353,61 +410,55 @@ def print_summary(results: list[SourceResult], mode: str) -> None:
     _hr(f"VALIDATION SUMMARY — mode={mode}")
 
     if HAS_RICH:
-        t = Table(box=box.ROUNDED, border_style="cyan", title=f"DoStyle Source Validation ({mode})")
-        t.add_column("Source",     style="bold", width=14)
-        t.add_column("Platform",   width=12)
-        t.add_column("Status",     width=9)
-        t.add_column("Method",     width=10)
-        t.add_column("Conf",       width=6)
-        t.add_column("Name",       width=5, justify="center")
-        t.add_column("Price",      width=6, justify="center")
-        t.add_column("Images",     width=7, justify="center")
-        t.add_column("Brand",      width=6, justify="center")
-        t.add_column("Sizes",      width=6, justify="center")
-        t.add_column("Colors",     width=7, justify="center")
-        t.add_column("Breadcrumbs",width=11,justify="center")
-        t.add_column("Completen.", width=10, justify="right")
-        t.add_column("Blocker/Warn", width=38)
+        t = Table(
+            box=box.ROUNDED, border_style="cyan",
+            title=f"DoStyle Strict Validation ({mode})",
+        )
+        t.add_column("Source",          style="bold", width=14)
+        t.add_column("Platform",        width=12)
+        t.add_column("Method",          width=10)
+        t.add_column("Conf",            width=6)
+        t.add_column("Complete",        width=9, justify="right")
+        t.add_column("Missing critical fields", width=36)
+        t.add_column("Grade",           width=9, justify="center")
+
+        grade_color = {"FULL": "green", "STRONG": "cyan", "PARTIAL": "yellow", "BLOCKED": "red"}
 
         for r in results:
-            sc = {"PASS": "green", "PARTIAL": "yellow", "FAIL": "red"}.get(r.status, "white")
-            fp = r.fields
-            c  = r.product.completeness_score if r.product else 0.0
-            note = (r.blockers[0] if r.blockers else (r.warnings[0] if r.warnings else ""))[:38]
-            conf_str = f"{r.confidence:.2f}" if r.confidence else "—"
+            g     = _grade(r)
+            gc    = grade_color.get(g, "white")
+            c     = f"{r.product.completeness_score:.0%}" if r.product else "—"
+            miss  = _missing_fields(r)
+            miss_str = f"[red]{miss}[/red]" if miss != "—" else "[green]none[/green]"
             t.add_row(
                 r.key,
                 r.platform,
-                f"[{sc}]{r.status}[/{sc}]",
                 r.extraction_method,
-                conf_str,
-                _tick(fp.get("product_name")),
-                _tick(fp.get("current_price")),
-                _tick(fp.get("image_urls")),
-                _tick(fp.get("brand")),
-                _tick(fp.get("sizes_available")),
-                _tick(fp.get("colors_available")),
-                _tick(fp.get("breadcrumbs")),
-                f"{c:.0%}",
-                f"[yellow]{note}[/yellow]" if note else "—",
+                f"{r.confidence:.2f}" if r.confidence else "—",
+                c,
+                miss_str,
+                f"[bold {gc}]{g}[/bold {gc}]",
             )
         console.print(t)
     else:
-        print(f"{'Source':<16}{'Platform':<12}{'Status':<10}{'Method':<10}{'Conf':<6}{'Complete':<10}{'Blocker'}")
-        print("─" * 90)
+        print(f"{'Source':<16}{'Platform':<12}{'Method':<10}{'Conf':<6}{'Complete':<10}{'Missing':<36}{'Grade'}")
+        print("─" * 100)
         for r in results:
-            c = f"{r.product.completeness_score:.0%}" if r.product else "—"
-            note = (r.blockers[0] if r.blockers else "")[:38]
-            print(f"{r.key:<16}{r.platform:<12}{r.status:<10}{r.extraction_method:<10}{r.confidence:<6.2f}{c:<10}{note}")
+            c    = f"{r.product.completeness_score:.0%}" if r.product else "—"
+            miss = _missing_fields(r)[:34]
+            g    = _grade(r)
+            print(f"{r.key:<16}{r.platform:<12}{r.extraction_method:<10}{r.confidence:<6.2f}{c:<10}{miss:<36}{g}")
 
-    passed  = sum(1 for r in results if r.status == "PASS")
-    partial = sum(1 for r in results if r.status == "PARTIAL")
-    failed  = sum(1 for r in results if r.status == "FAIL")
+    full    = sum(1 for r in results if _grade(r) == "FULL")
+    strong  = sum(1 for r in results if _grade(r) == "STRONG")
+    partial = sum(1 for r in results if _grade(r) == "PARTIAL")
+    blocked = sum(1 for r in results if _grade(r) == "BLOCKED")
     console.print(
-        f"\n[bold]RESULT:[/bold] [green]{passed} PASS[/green]  "
-        f"[yellow]{partial} PARTIAL[/yellow]  [red]{failed} FAIL[/red]  "
-        f"(out of {len(results)} sources)" if HAS_RICH
-        else f"\nRESULT: {passed} PASS | {partial} PARTIAL | {failed} FAIL / {len(results)}"
+        f"\n[bold]GRADES:[/bold] [green]{full} FULL[/green]  "
+        f"[cyan]{strong} STRONG[/cyan]  "
+        f"[yellow]{partial} PARTIAL[/yellow]  "
+        f"[red]{blocked} BLOCKED[/red]  (of {len(results)} sources)" if HAS_RICH
+        else f"\nGRADES: {full} FULL | {strong} STRONG | {partial} PARTIAL | {blocked} BLOCKED / {len(results)}"
     )
 
     # Print parsed product names as quick sanity check

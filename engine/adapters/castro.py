@@ -158,36 +158,68 @@ class CastroAdapter(BaseAdapter):
         )
 
     def _enrich_from_script(self, raw: RawProductPayload, partial: dict) -> None:
-        """Try to add variant / size data from script payload."""
+        """Enrich partial product dict from script payloads (Castro __INITIAL_STATE__ etc.)."""
         if not raw.script_payload:
             return
         payload = raw.script_payload
 
-        # Look for product data in various patterns
         for key in ["initial_state", "preloaded_state", "product_data", "pdp_data"]:
             data = payload.get(key)
             if not isinstance(data, dict):
                 continue
-            # Navigate to product
             product = data.get("product", data.get("currentProduct", data.get("pdp", {})))
             if not isinstance(product, dict):
                 continue
 
-            variants_raw = product.get("variants", product.get("skus", []))
-            if variants_raw:
-                variants = normalize_variants(variants_raw)
-                partial["color_variant_objects"] = variants
+            # Castro __INITIAL_STATE__ carries sizes/colors as direct string arrays
+            sizes_raw = product.get("sizes", [])
+            colors_raw = product.get("colors", [])
+            if isinstance(sizes_raw, list) and sizes_raw:
+                partial.setdefault("sizes_available", normalize_sizes([str(s) for s in sizes_raw]))
+            if isinstance(colors_raw, list) and colors_raw:
+                partial.setdefault("colors_available", normalize_colors([str(c) for c in colors_raw]))
 
-                sizes: list[str] = []
-                colors: list[str] = []
-                for v in variants:
-                    if v.size and v.size not in sizes:
-                        sizes.append(v.size)
-                    if v.color and v.color not in colors:
-                        colors.append(v.color)
-                partial.setdefault("sizes_available", normalize_sizes(sizes))
-                partial.setdefault("colors_available", normalize_colors(colors))
+            # Category
+            category = product.get("category", "")
+            if category:
+                partial.setdefault("category", category)
+
+            # Gender
+            gender_raw = product.get("gender", "")
+            if gender_raw:
+                partial.setdefault("gender_target", detect_gender(gender_raw) or gender_raw)
+
+            # Original / compare-at price for sale detection
+            orig_price = product.get("originalPrice", product.get("compareAtPrice", 0))
+            if orig_price:
+                partial.setdefault("original_price", float(orig_price))
+
+            # Internal product reference / SKU
+            prod_id = product.get("id", "")
+            if prod_id:
+                partial.setdefault("source_product_reference", str(prod_id))
+
+            # Structured variant objects (when present)
+            variants_raw = product.get("variants", product.get("skus", []))
+            if variants_raw and isinstance(variants_raw, list):
+                variants = normalize_variants(variants_raw)
+                if variants:
+                    partial["color_variant_objects"] = variants
+                    if not partial.get("sizes_available"):
+                        sizes_v = [v.size for v in variants if v.size]
+                        partial["sizes_available"] = normalize_sizes(list(dict.fromkeys(sizes_v)))
+                    if not partial.get("colors_available"):
+                        colors_v = [v.color for v in variants if v.color]
+                        partial["colors_available"] = normalize_colors(list(dict.fromkeys(colors_v)))
             break
+
+        # Category fallback: derive from breadcrumbs (second-to-last crumb)
+        if not partial.get("category") and partial.get("breadcrumbs"):
+            crumbs = partial["breadcrumbs"]
+            if len(crumbs) >= 3:
+                partial["category"] = crumbs[-2]
+            elif len(crumbs) == 2:
+                partial["category"] = crumbs[1]
 
     def _parse_script_payload(self, raw: RawProductPayload) -> Optional[dict]:
         """Try to extract product from inline script payloads."""

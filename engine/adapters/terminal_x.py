@@ -35,6 +35,26 @@ from engine.normalization.images import normalize_image_urls
 
 log = logging.getLogger("engine.adapters.terminal_x")
 
+# Color keywords to detect from URLs/filenames for single-colorway products
+_URL_COLOR_KEYWORDS: dict[str, str] = {
+    "black": "שחור", "white": "לבן", "grey": "אפור", "gray": "אפור",
+    "navy": "נייבי", "blue": "כחול", "red": "אדום", "green": "ירוק",
+    "pink": "ורוד", "beige": "בז'", "brown": "חום", "yellow": "צהוב",
+    "orange": "כתום", "purple": "סגול", "gold": "זהב", "silver": "כסף",
+    "nude": "נוד", "cream": "קרם", "khaki": "חאקי", "olive": "זית",
+    "camel": "קמל", "coral": "קורל", "mint": "מנטה", "taupe": "טאופ",
+}
+
+
+def _infer_color_from_url(url: str) -> Optional[str]:
+    """Try to infer a color from a product URL or image filename."""
+    url_lower = url.lower()
+    for keyword, hebrew in _URL_COLOR_KEYWORDS.items():
+        # Match as whole word or hyphen-bounded segment
+        if re.search(rf"(?<![a-z]){re.escape(keyword)}(?![a-z])", url_lower):
+            return hebrew
+    return None
+
 
 class TerminalXAdapter(BaseAdapter):
     SOURCE_KEY = "terminal_x"
@@ -150,25 +170,49 @@ class TerminalXAdapter(BaseAdapter):
     def _extract_magento_data(self, html: str) -> Optional[dict]:
         """
         Extract Magento 2 product data from:
+        - text/x-magento-init script blocks (swatch-renderer component)
         - data-mage-init attributes
         - window.dataLayer product pushes
         - Inline configurable product JSON
         """
-        # Pattern: [data-role=swatch-options] or inline product config
+        from bs4 import BeautifulSoup
+
+        # Priority 1: text/x-magento-init script blocks
+        soup = BeautifulSoup(html, "lxml")
+        for script in soup.find_all("script", type="text/x-magento-init"):
+            raw = script.get_text(strip=True)
+            if not raw:
+                continue
+            try:
+                data = json.loads(raw)
+            except json.JSONDecodeError:
+                continue
+            # Navigate: * → Magento_Ui/js/core/app → components → product-swatch-renderer
+            for root_key in data.values():
+                if not isinstance(root_key, dict):
+                    continue
+                app = root_key.get("Magento_Ui/js/core/app", {})
+                components = app.get("components", {})
+                for comp_name, comp_data in components.items():
+                    if "swatch" in comp_name.lower() or "product" in comp_name.lower():
+                        if isinstance(comp_data, dict) and (
+                            "attributes" in comp_data or "product" in comp_data
+                        ):
+                            return comp_data
+                # Also check direct swatch-renderer keys
+                if "product-swatch-renderer" in root_key:
+                    return root_key["product-swatch-renderer"]
+
+        # Priority 2: inline regex patterns
         patterns = [
-            r'\[data-role=swatch-options\][^>]*>(.*?)</script',
-            r'JsonConfig\s*=\s*(\{.*?\})\s*;',
             r'"configurable_simple_product"\s*:\s*(\{.+?\})',
-            r'ProductPrice\s*=\s*(\{.+?\})',
-            # dataLayer
+            r'JsonConfig\s*=\s*(\{.*?\})\s*;',
             r'dataLayer\.push\s*\(\s*(\{.*?"ecommerce".*?\})\s*\)',
         ]
-
         for pattern in patterns:
             match = re.search(pattern, html, re.DOTALL)
             if match:
                 raw_json = match.group(1)
-                # Balance braces
                 depth = 0
                 end = 0
                 for i, ch in enumerate(raw_json):
@@ -193,15 +237,17 @@ class TerminalXAdapter(BaseAdapter):
             if ld:
                 partial = parse_product_from_json_ld(ld)
                 partial["breadcrumbs"] = find_breadcrumbs_json_ld(raw.json_ld_data)
-                # Enrich with Magento script data
+                # Enrich with Magento script data (sizes, colors from swatch-renderer)
                 if raw.script_payload and raw.script_payload.get("magento_product"):
                     self._enrich_from_magento(raw.script_payload["magento_product"], partial)
+                # Enrich from HTML for anything still missing (sizes, colors, category)
+                self._enrich_from_html(raw, partial)
                 raw.extraction_method = "json_ld"
                 product = self.normalize(raw, partial)
                 return ParseResult(
                     success=True, product_url=raw.product_url,
                     source_site=raw.source_site, product=product,
-                    extraction_method="json_ld", confidence=0.88,
+                    extraction_method="json_ld", confidence=0.92,
                 )
 
         # 2. Script payload
@@ -256,6 +302,76 @@ class TerminalXAdapter(BaseAdapter):
             "current_price": current_price,
             "original_price": original_price,
         }
+
+    def _enrich_from_html(self, raw: RawProductPayload, partial: dict) -> None:
+        """Supplement parsed data with DOM-extracted sizes, colors, category."""
+        if not raw.html_snapshot:
+            return
+        from engine.extraction.dom_selector import DOMExtractor
+        dom = DOMExtractor(raw.html_snapshot)
+
+        # Sizes from Magento 2 swatch options
+        if not partial.get("sizes_available"):
+            sizes = dom.texts(
+                ".swatch-option.text",
+                ".swatch-attribute.size .swatch-option",
+                "[data-option-label]",
+            )
+            if sizes:
+                partial["sizes_available"] = normalize_sizes(sizes)
+
+        # Colors from Magento 2 color swatches
+        if not partial.get("colors_available"):
+            colors = dom.attrs(
+                ".swatch-option.color",
+                "option-label",
+            ) or dom.texts(".swatch-option.color")
+            if colors:
+                partial["colors_available"] = normalize_colors(colors)
+            else:
+                # Single-colorway product: infer color from product URL or image filenames
+                for candidate in [raw.product_url or ""] + (partial.get("image_urls") or []):
+                    color = _infer_color_from_url(candidate)
+                    if color:
+                        partial["colors_available"] = [color]
+                        break
+
+        # Category from breadcrumbs (second-to-last = category, last = product name)
+        if not partial.get("category"):
+            crumbs = partial.get("breadcrumbs") or []
+            if len(crumbs) >= 3:
+                partial["category"] = crumbs[-2]
+            elif len(crumbs) == 2:
+                partial["category"] = crumbs[1]
+            else:
+                dom_crumbs = dom.extract_breadcrumbs()
+                if len(dom_crumbs) >= 2:
+                    partial["category"] = dom_crumbs[-2]
+                    if not partial.get("breadcrumbs"):
+                        partial["breadcrumbs"] = dom_crumbs
+
+        # Gender from breadcrumbs (first navigation crumb often encodes gender)
+        if not partial.get("gender_target") and partial.get("breadcrumbs"):
+            for crumb in partial["breadcrumbs"]:
+                g = detect_gender(crumb)
+                if g and g != "unisex":
+                    partial["gender_target"] = g
+                    break
+
+        # Original/regular price from DOM (when no sale price in JSON-LD)
+        if not partial.get("original_price"):
+            orig = dom.extract_price(
+                ".price-box .old-price .price",
+                "[data-price-type='oldPrice'] .price",
+            )
+            if orig:
+                partial["original_price"] = orig
+
+        # Description from product detail section
+        if not partial.get("short_description"):
+            desc = dom.text(".product.attribute.description .value")
+            if desc:
+                partial["short_description"] = normalize_text(desc)[:300]
 
     def _parse_dom(self, raw: RawProductPayload) -> ParseResult:
         """Magento 2 DOM selectors."""
