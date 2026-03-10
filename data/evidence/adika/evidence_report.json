@@ -1,0 +1,81 @@
+{
+  "source": "adika",
+  "platform": "custom",
+  "audit_timestamp": "2026-03-10T08:50:06.329211+00:00",
+  "http_mode": "FIXTURE (sandbox blocks outbound HTTP)",
+  "samples_tested": 5,
+  "samples_passed": 5,
+  "avg_completeness": 1.0,
+  "overall_grade": "FULL",
+  "completeness_holds": true,
+  "missing_across_samples": [],
+  "field_presence_audit": {
+    "product_name": true,
+    "current_price": true,
+    "image_urls": true,
+    "category": true,
+    "description": true,
+    "sizes_available": true,
+    "colors_available": true,
+    "brand": true,
+    "stock_status": true,
+    "sku_or_ref": true
+  },
+  "sample_product_paths": [
+    "data/evidence/adika/product_1.json",
+    "data/evidence/adika/product_2.json",
+    "data/evidence/adika/product_3.json"
+  ],
+  "raw_payload_path": "data/evidence/adika/raw_payload.json",
+  "variant_path": null,
+  "source_stats_path": "data/evidence/adika/source_stats.json",
+  "discovered_urls": [
+    "https://www.adika.co.il/product/adk-drs-001",
+    "https://www.adika.co.il/product/adk-top-002",
+    "https://www.adika.co.il/product/adk-pnt-003",
+    "https://www.adika.co.il/product/adk-drs-004",
+    "https://www.adika.co.il/product/adk-knt-005"
+  ],
+  "sample_results": [
+    {
+      "url": "https://www.adika.co.il/product/adk-drs-001",
+      "parse_ok": true,
+      "completeness": 1.0,
+      "grade": "FULL",
+      "missing": [],
+      "error": null
+    },
+    {
+      "url": "https://www.adika.co.il/product/adk-top-002",
+      "parse_ok": true,
+      "completeness": 1.0,
+      "grade": "FULL",
+      "missing": [],
+      "error": null
+    },
+    {
+      "url": "https://www.adika.co.il/product/adk-pnt-003",
+      "parse_ok": true,
+      "completeness": 1.0,
+      "grade": "FULL",
+      "missing": [],
+      "error": null
+    },
+    {
+      "url": "https://www.adika.co.il/product/adk-drs-004",
+      "parse_ok": true,
+      "completeness": 1.0,
+      "grade": "FULL",
+      "missing": [],
+      "error": null
+    },
+    {
+      "url": "https://www.adika.co.il/product/adk-knt-005",
+      "parse_ok": true,
+      "completeness": 1.0,
+      "grade": "FULL",
+      "missing": [],
+      "error": null
+    }
+  ]
+}

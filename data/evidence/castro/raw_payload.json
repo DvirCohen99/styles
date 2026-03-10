@@ -1,0 +1,115 @@
+{
+  "source_site": "castro",
+  "product_url": "https://www.castro.com/he/product/ctr-mom-001",
+  "extraction_method": "json_ld",
+  "has_html_snapshot": true,
+  "html_snapshot_length": 3289,
+  "json_ld_blocks": 2,
+  "script_payload_keys": [
+    "initial_state"
+  ],
+  "json_ld_data": [
+    {
+      "@context": "https://schema.org",
+      "@type": "Product",
+      "name": "ג'ינס סקיני MOM",
+      "description": "ג'ינס סקיני בגזרת MOM. גזרה גבוהה עם שרוכי קשירה.",
+      "sku": "CTR-MOM-001",
+      "image": [
+        "https://res.castro.com/fit-in/700x933/filters:quality(90)/product/ctr-mom-001_front.jpg",
+        "https://res.castro.com/fit-in/700x933/filters:quality(90)/product/ctr-mom-001_back.jpg",
+        "https://res.castro.com/fit-in/700x933/filters:quality(90)/product/ctr-mom-001_side.jpg"
+      ],
+      "brand": {
+        "@type": "Brand",
+        "name": "Castro"
+      },
+      "offers": {
+        "@type": "Offer",
+        "url": "https://www.castro.com/he/product/ctr-mom-001",
+        "price": "199",
+        "priceCurrency": "ILS",
+        "availability": "https://schema.org/InStock",
+        "priceValidUntil": "2026-12-31"
+      },
+      "additionalProperty": [
+        {
+          "@type": "PropertyValue",
+          "name": "מחיר מקורי",
+          "value": "299"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "חומר",
+          "value": "כותנה 98%, אלסטן 2%"
+        }
+      ]
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "ראשי",
+          "item": "https://www.castro.com/he"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "נשים",
+          "item": "https://www.castro.com/he/women"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "ג'ינס ומכנסיים",
+          "item": "https://www.castro.com/he/women/ג'ינס-ומכנסיים"
+        },
+        {
+          "@type": "ListItem",
+          "position": 4,
+          "name": "ג'ינס סקיני MOM"
+        }
+      ]
+    }
+  ],
+  "script_payload": {
+    "initial_state": {
+      "product": {
+        "id": "CTR-MOM-001",
+        "name": "ג'ינס סקיני MOM",
+        "price": 199,
+        "originalPrice": 299,
+        "images": [
+          {
+            "src": "https://res.castro.com/fit-in/700x933/filters:quality(90)/product/ctr-mom-001_front.jpg"
+          },
+          {
+            "src": "https://res.castro.com/fit-in/700x933/filters:quality(90)/product/ctr-mom-001_back.jpg"
+          }
+        ],
+        "sizes": [
+          "24",
+          "25",
+          "26",
+          "27",
+          "28",
+          "29",
+          "30",
+          "31",
+          "32"
+        ],
+        "colors": [
+          "כחול שחוק",
+          "שחור",
+          "ג'ינס בהיר"
+        ],
+        "category": "ג'ינס ומכנסיים",
+        "gender": "women",
+        "inStock": true
+      }
+    }
+  }
+}

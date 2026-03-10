@@ -1,0 +1,55 @@
+{
+  "source_site": "cstyle",
+  "product_url": "https://www.cstyle.co.il/product/cs-crop-tie-887/",
+  "extraction_method": "json_ld",
+  "has_html_snapshot": true,
+  "html_snapshot_length": 3256,
+  "json_ld_blocks": 2,
+  "script_payload_keys": [],
+  "json_ld_data": [
+    {
+      "@context": "https://schema.org",
+      "@type": "Product",
+      "name": "טופ קרופ שרוכים",
+      "description": "טופ קרופ עם שרוכי קשירה בכתפיים. עשוי ויסקוזה 90%, ליקרה 10%.",
+      "sku": "CS-CROP-TIE-887",
+      "image": [
+        "https://www.cstyle.co.il/wp-content/uploads/cs-crop-tie-887_1.jpg",
+        "https://www.cstyle.co.il/wp-content/uploads/cs-crop-tie-887_2.jpg"
+      ],
+      "brand": {
+        "@type": "Brand",
+        "name": "CStyle"
+      },
+      "offers": {
+        "@type": "Offer",
+        "price": "89",
+        "priceCurrency": "ILS",
+        "availability": "https://schema.org/InStock"
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "ראשי",
+          "item": "https://www.cstyle.co.il"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "טופס",
+          "item": "https://www.cstyle.co.il/product-category/טופס"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "טופ קרופ שרוכים"
+        }
+      ]
+    }
+  ]
+}

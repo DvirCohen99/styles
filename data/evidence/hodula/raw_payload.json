@@ -1,0 +1,17 @@
+{
+  "source_site": "hodula",
+  "product_url": "https://www.hodula.co.il/products/חולצת-פשתן-קצרה",
+  "extraction_method": "api",
+  "has_html_snapshot": false,
+  "html_snapshot_length": 0,
+  "json_ld_blocks": 0,
+  "script_payload_keys": [
+    "shopify_product"
+  ],
+  "script_payload": {
+    "shopify_product": {
+      "_truncated": true,
+      "_preview": "{\"id\": 16191, \"title\": \"חולצת פשתן קצרה\", \"vendor\": \"Hodula\", \"handle\": \"חולצת-פשתן-קצרה\", \"product_type\": \"חולצות\", \"tags\": [\"חולצות\", \"new\"], \"body_html\": \"<p>חולצת פשתן קצרה</p>\", \"options\": [{\"name\": \"מידה\", \"values\": [\"XS\", \"S\", \"M\", \"L\", \"XL\"]}, {\"name\": \"צבע\", \"values\": [\"לבן שביר\", \"בז'\", \"ירוק מנטה\"]}], \"variants\": [{\"id\": 1001, \"title\": \"לבן שביר / XS\", \"option1\": \"XS\", \"option2\": \"לבן שביר\", \"sku\": \"HOD-LIN-Xלב\", \"price\": \"159.0\", \"compare_at_price\": \"229.0\", \"available\": true, \"inven"
+    }
+  }
+}

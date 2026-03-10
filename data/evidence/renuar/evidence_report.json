@@ -1,0 +1,81 @@
+{
+  "source": "renuar",
+  "platform": "shopify",
+  "audit_timestamp": "2026-03-10T08:50:06.329211+00:00",
+  "http_mode": "FIXTURE (sandbox blocks outbound HTTP)",
+  "samples_tested": 5,
+  "samples_passed": 5,
+  "avg_completeness": 1.0,
+  "overall_grade": "FULL",
+  "completeness_holds": true,
+  "missing_across_samples": [],
+  "field_presence_audit": {
+    "product_name": true,
+    "current_price": true,
+    "image_urls": true,
+    "category": true,
+    "description": true,
+    "sizes_available": true,
+    "colors_available": true,
+    "brand": true,
+    "stock_status": true,
+    "sku_or_ref": true
+  },
+  "sample_product_paths": [
+    "data/evidence/renuar/product_1.json",
+    "data/evidence/renuar/product_2.json",
+    "data/evidence/renuar/product_3.json"
+  ],
+  "raw_payload_path": "data/evidence/renuar/raw_payload.json",
+  "variant_path": "data/evidence/renuar/variant_example.json",
+  "source_stats_path": "data/evidence/renuar/source_stats.json",
+  "discovered_urls": [
+    "https://www.renuar.co.il/products/linen-crop-shirt",
+    "https://www.renuar.co.il/products/midi-romantic-dress",
+    "https://www.renuar.co.il/products/bootcut-jeans",
+    "https://www.renuar.co.il/products/mini-chiffon-skirt",
+    "https://www.renuar.co.il/products/oversized-sweatshirt"
+  ],
+  "sample_results": [
+    {
+      "url": "https://www.renuar.co.il/products/linen-crop-shirt",
+      "parse_ok": true,
+      "completeness": 1.0,
+      "grade": "FULL",
+      "missing": [],
+      "error": null
+    },
+    {
+      "url": "https://www.renuar.co.il/products/midi-romantic-dress",
+      "parse_ok": true,
+      "completeness": 1.0,
+      "grade": "FULL",
+      "missing": [],
+      "error": null
+    },
+    {
+      "url": "https://www.renuar.co.il/products/bootcut-jeans",
+      "parse_ok": true,
+      "completeness": 1.0,
+      "grade": "FULL",
+      "missing": [],
+      "error": null
+    },
+    {
+      "url": "https://www.renuar.co.il/products/mini-chiffon-skirt",
+      "parse_ok": true,
+      "completeness": 1.0,
+      "grade": "FULL",
+      "missing": [],
+      "error": null
+    },
+    {
+      "url": "https://www.renuar.co.il/products/oversized-sweatshirt",
+      "parse_ok": true,
+      "completeness": 1.0,
+      "grade": "FULL",
+      "missing": [],
+      "error": null
+    }
+  ]
+}

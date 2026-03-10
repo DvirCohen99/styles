@@ -1,0 +1,81 @@
+{
+  "source": "terminal_x",
+  "platform": "magento",
+  "audit_timestamp": "2026-03-10T08:50:06.329211+00:00",
+  "http_mode": "FIXTURE (sandbox blocks outbound HTTP)",
+  "samples_tested": 5,
+  "samples_passed": 5,
+  "avg_completeness": 1.0,
+  "overall_grade": "FULL",
+  "completeness_holds": true,
+  "missing_across_samples": [],
+  "field_presence_audit": {
+    "product_name": true,
+    "current_price": true,
+    "image_urls": true,
+    "category": true,
+    "description": true,
+    "sizes_available": true,
+    "colors_available": true,
+    "brand": true,
+    "stock_status": true,
+    "sku_or_ref": true
+  },
+  "sample_product_paths": [
+    "data/evidence/terminal_x/product_1.json",
+    "data/evidence/terminal_x/product_2.json",
+    "data/evidence/terminal_x/product_3.json"
+  ],
+  "raw_payload_path": "data/evidence/terminal_x/raw_payload.json",
+  "variant_path": null,
+  "source_stats_path": "data/evidence/terminal_x/source_stats.json",
+  "discovered_urls": [
+    "https://www.terminalx.com/new-balance-574-grey.html",
+    "https://www.terminalx.com/nike-air-force-1-white.html",
+    "https://www.terminalx.com/adidas-sweatshirt-grey.html",
+    "https://www.terminalx.com/puma-rs-x-pink.html",
+    "https://www.terminalx.com/new-era-cap-black.html"
+  ],
+  "sample_results": [
+    {
+      "url": "https://www.terminalx.com/new-balance-574-grey.html",
+      "parse_ok": true,
+      "completeness": 1.0,
+      "grade": "FULL",
+      "missing": [],
+      "error": null
+    },
+    {
+      "url": "https://www.terminalx.com/nike-air-force-1-white.html",
+      "parse_ok": true,
+      "completeness": 1.0,
+      "grade": "FULL",
+      "missing": [],
+      "error": null
+    },
+    {
+      "url": "https://www.terminalx.com/adidas-sweatshirt-grey.html",
+      "parse_ok": true,
+      "completeness": 1.0,
+      "grade": "FULL",
+      "missing": [],
+      "error": null
+    },
+    {
+      "url": "https://www.terminalx.com/puma-rs-x-pink.html",
+      "parse_ok": true,
+      "completeness": 1.0,
+      "grade": "FULL",
+      "missing": [],
+      "error": null
+    },
+    {
+      "url": "https://www.terminalx.com/new-era-cap-black.html",
+      "parse_ok": true,
+      "completeness": 1.0,
+      "grade": "FULL",
+      "missing": [],
+      "error": null
+    }
+  ]
+}

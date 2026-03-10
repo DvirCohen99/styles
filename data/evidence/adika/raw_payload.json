@@ -1,0 +1,103 @@
+{
+  "source_site": "adika",
+  "product_url": "https://www.adika.co.il/product/adk-drs-001",
+  "extraction_method": "script",
+  "has_html_snapshot": true,
+  "html_snapshot_length": 1723,
+  "json_ld_blocks": 1,
+  "script_payload_keys": [
+    "next_data"
+  ],
+  "json_ld_data": [
+    {
+      "@context": "https://schema.org",
+      "@type": "Product",
+      "name": "שמלת מידי אסימטרית",
+      "description": "שמלת מידי אסימטרית. ויסקוזה 95%, ספנדקס 5%.",
+      "sku": "ADK-DRS-001",
+      "image": [
+        "https://static.adika.co.il/product/adk-drs-001_1.jpg",
+        "https://static.adika.co.il/product/adk-drs-001_2.jpg"
+      ],
+      "brand": {
+        "@type": "Brand",
+        "name": "Adika"
+      },
+      "offers": {
+        "@type": "Offer",
+        "price": "189",
+        "priceCurrency": "ILS",
+        "availability": "https://schema.org/InStock"
+      }
+    }
+  ],
+  "script_payload": {
+    "next_data": {
+      "props": {
+        "pageProps": {
+          "product": {
+            "id": 59264,
+            "sku": "ADK-DRS-001",
+            "name": "שמלת מידי אסימטרית",
+            "price": 189,
+            "originalPrice": 269,
+            "images": [
+              {
+                "url": "https://static.adika.co.il/product/adk-drs-001_1.jpg",
+                "alt": "שמלת מידי אסימטרית"
+              },
+              {
+                "url": "https://static.adika.co.il/product/adk-drs-001_2.jpg",
+                "alt": "שמלת מידי אסימטרית"
+              },
+              {
+                "url": "https://static.adika.co.il/product/adk-drs-001_3.jpg",
+                "alt": "שמלת מידי אסימטרית"
+              },
+              {
+                "url": "https://static.adika.co.il/product/adk-drs-001_4.jpg",
+                "alt": "שמלת מידי אסימטרית"
+              }
+            ],
+            "sizes": [
+              {
+                "name": "XS",
+                "available": true
+              },
+              {
+                "name": "S",
+                "available": true
+              },
+              {
+                "name": "M",
+                "available": true
+              },
+              {
+                "name": "L",
+                "available": true
+              },
+              {
+                "name": "XL",
+                "available": true
+              }
+            ],
+            "colors": [
+              {
+                "name": "שחור",
+                "available": true
+              },
+              {
+                "name": "יין",
+                "available": true
+              }
+            ],
+            "category": "שמלות",
+            "description": "שמלת מידי אסימטרית. ויסקוזה 95%, ספנדקס 5%.",
+            "isNew": false,
+            "inStock": true
+          }
+        }
+      }
+    }
+  }
+}

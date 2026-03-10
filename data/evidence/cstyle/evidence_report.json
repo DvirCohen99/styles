@@ -1,0 +1,81 @@
+{
+  "source": "cstyle",
+  "platform": "woocommerce",
+  "audit_timestamp": "2026-03-10T08:50:06.329211+00:00",
+  "http_mode": "FIXTURE (sandbox blocks outbound HTTP)",
+  "samples_tested": 5,
+  "samples_passed": 5,
+  "avg_completeness": 1.0,
+  "overall_grade": "FULL",
+  "completeness_holds": true,
+  "missing_across_samples": [],
+  "field_presence_audit": {
+    "product_name": true,
+    "current_price": true,
+    "image_urls": true,
+    "category": true,
+    "description": true,
+    "sizes_available": true,
+    "colors_available": true,
+    "brand": true,
+    "stock_status": true,
+    "sku_or_ref": true
+  },
+  "sample_product_paths": [
+    "data/evidence/cstyle/product_1.json",
+    "data/evidence/cstyle/product_2.json",
+    "data/evidence/cstyle/product_3.json"
+  ],
+  "raw_payload_path": "data/evidence/cstyle/raw_payload.json",
+  "variant_path": null,
+  "source_stats_path": "data/evidence/cstyle/source_stats.json",
+  "discovered_urls": [
+    "https://www.cstyle.co.il/product/crop-top-tie/",
+    "https://www.cstyle.co.il/product/wrap-midi-dress/",
+    "https://www.cstyle.co.il/product/glitter-culottes/",
+    "https://www.cstyle.co.il/product/chiffon-tie-blouse/",
+    "https://www.cstyle.co.il/product/basic-short-coat/"
+  ],
+  "sample_results": [
+    {
+      "url": "https://www.cstyle.co.il/product/crop-top-tie/",
+      "parse_ok": true,
+      "completeness": 1.0,
+      "grade": "FULL",
+      "missing": [],
+      "error": null
+    },
+    {
+      "url": "https://www.cstyle.co.il/product/wrap-midi-dress/",
+      "parse_ok": true,
+      "completeness": 1.0,
+      "grade": "FULL",
+      "missing": [],
+      "error": null
+    },
+    {
+      "url": "https://www.cstyle.co.il/product/glitter-culottes/",
+      "parse_ok": true,
+      "completeness": 1.0,
+      "grade": "FULL",
+      "missing": [],
+      "error": null
+    },
+    {
+      "url": "https://www.cstyle.co.il/product/chiffon-tie-blouse/",
+      "parse_ok": true,
+      "completeness": 1.0,
+      "grade": "FULL",
+      "missing": [],
+      "error": null
+    },
+    {
+      "url": "https://www.cstyle.co.il/product/basic-short-coat/",
+      "parse_ok": true,
+      "completeness": 1.0,
+      "grade": "FULL",
+      "missing": [],
+      "error": null
+    }
+  ]
+}

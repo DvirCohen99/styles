@@ -1,0 +1,14 @@
+{
+  "renuar": {
+    "status": "PARTIAL",
+    "urls_found": 0,
+    "products_parsed": 0,
+    "valid_products": 0,
+    "fields_present": {},
+    "blockers": [],
+    "warnings": [
+      "Discovery returned 0 URLs"
+    ],
+    "sample_product": null
+  }
+}

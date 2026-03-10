@@ -1,0 +1,22 @@
+{
+  "source_key": "renuar",
+  "run_id": null,
+  "started_at": "2026-03-10T08:50:06.545354+00:00",
+  "finished_at": null,
+  "urls_discovered": 5,
+  "products_attempted": 5,
+  "products_parsed": 5,
+  "products_failed": 0,
+  "products_skipped": 0,
+  "products_saved": 3,
+  "total_live_products": 5,
+  "sale_products_count": 3,
+  "new_collection_products_count": 0,
+  "out_of_stock_count": 1,
+  "partial_parse_count": 0,
+  "warning_count": 0,
+  "last_successful_scrape": "2026-03-10T08:50:06.329211+00:00",
+  "parser_health_status": "healthy",
+  "error_messages": [],
+  "duration_sec": null
+}

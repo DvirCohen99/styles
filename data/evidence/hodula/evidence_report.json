@@ -1,0 +1,81 @@
+{
+  "source": "hodula",
+  "platform": "shopify",
+  "audit_timestamp": "2026-03-10T08:50:06.329211+00:00",
+  "http_mode": "FIXTURE (sandbox blocks outbound HTTP)",
+  "samples_tested": 5,
+  "samples_passed": 5,
+  "avg_completeness": 1.0,
+  "overall_grade": "FULL",
+  "completeness_holds": true,
+  "missing_across_samples": [],
+  "field_presence_audit": {
+    "product_name": true,
+    "current_price": true,
+    "image_urls": true,
+    "category": true,
+    "description": true,
+    "sizes_available": true,
+    "colors_available": true,
+    "brand": true,
+    "stock_status": true,
+    "sku_or_ref": true
+  },
+  "sample_product_paths": [
+    "data/evidence/hodula/product_1.json",
+    "data/evidence/hodula/product_2.json",
+    "data/evidence/hodula/product_3.json"
+  ],
+  "raw_payload_path": "data/evidence/hodula/raw_payload.json",
+  "variant_path": "data/evidence/hodula/variant_example.json",
+  "source_stats_path": "data/evidence/hodula/source_stats.json",
+  "discovered_urls": [
+    "https://www.hodula.co.il/products/linen-crop-shirt",
+    "https://www.hodula.co.il/products/tiered-midi-dress",
+    "https://www.hodula.co.il/products/wide-linen-trousers",
+    "https://www.hodula.co.il/products/front-tie-crop",
+    "https://www.hodula.co.il/products/denim-mini-dress"
+  ],
+  "sample_results": [
+    {
+      "url": "https://www.hodula.co.il/products/linen-crop-shirt",
+      "parse_ok": true,
+      "completeness": 1.0,
+      "grade": "FULL",
+      "missing": [],
+      "error": null
+    },
+    {
+      "url": "https://www.hodula.co.il/products/tiered-midi-dress",
+      "parse_ok": true,
+      "completeness": 1.0,
+      "grade": "FULL",
+      "missing": [],
+      "error": null
+    },
+    {
+      "url": "https://www.hodula.co.il/products/wide-linen-trousers",
+      "parse_ok": true,
+      "completeness": 1.0,
+      "grade": "FULL",
+      "missing": [],
+      "error": null
+    },
+    {
+      "url": "https://www.hodula.co.il/products/front-tie-crop",
+      "parse_ok": true,
+      "completeness": 1.0,
+      "grade": "FULL",
+      "missing": [],
+      "error": null
+    },
+    {
+      "url": "https://www.hodula.co.il/products/denim-mini-dress",
+      "parse_ok": true,
+      "completeness": 1.0,
+      "grade": "FULL",
+      "missing": [],
+      "error": null
+    }
+  ]
+}

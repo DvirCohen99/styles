@@ -1,0 +1,81 @@
+{
+  "source": "zara",
+  "platform": "custom",
+  "audit_timestamp": "2026-03-10T08:50:06.329211+00:00",
+  "http_mode": "FIXTURE (sandbox blocks outbound HTTP)",
+  "samples_tested": 5,
+  "samples_passed": 5,
+  "avg_completeness": 1.0,
+  "overall_grade": "FULL",
+  "completeness_holds": true,
+  "missing_across_samples": [],
+  "field_presence_audit": {
+    "product_name": true,
+    "current_price": true,
+    "image_urls": true,
+    "category": true,
+    "description": true,
+    "sizes_available": true,
+    "colors_available": true,
+    "brand": true,
+    "stock_status": true,
+    "sku_or_ref": true
+  },
+  "sample_product_paths": [
+    "data/evidence/zara/product_1.json",
+    "data/evidence/zara/product_2.json",
+    "data/evidence/zara/product_3.json"
+  ],
+  "raw_payload_path": "data/evidence/zara/raw_payload.json",
+  "variant_path": "data/evidence/zara/variant_example.json",
+  "source_stats_path": "data/evidence/zara/source_stats.json",
+  "discovered_urls": [
+    "https://www.zara.com/il/he/ribbed-mini-dress-p310073139.html",
+    "https://www.zara.com/il/he/ribbed-high-waist-trousers-p316048139.html",
+    "https://www.zara.com/il/he/linen-shirt-man-p407009307.html",
+    "https://www.zara.com/il/he/slim-jeans-man-p314083307.html",
+    "https://www.zara.com/il/he/striped-dress-girl-p312027620.html"
+  ],
+  "sample_results": [
+    {
+      "url": "https://www.zara.com/il/he/ribbed-mini-dress-p310073139.html",
+      "parse_ok": true,
+      "completeness": 1.0,
+      "grade": "FULL",
+      "missing": [],
+      "error": null
+    },
+    {
+      "url": "https://www.zara.com/il/he/ribbed-high-waist-trousers-p316048139.html",
+      "parse_ok": true,
+      "completeness": 1.0,
+      "grade": "FULL",
+      "missing": [],
+      "error": null
+    },
+    {
+      "url": "https://www.zara.com/il/he/linen-shirt-man-p407009307.html",
+      "parse_ok": true,
+      "completeness": 1.0,
+      "grade": "FULL",
+      "missing": [],
+      "error": null
+    },
+    {
+      "url": "https://www.zara.com/il/he/slim-jeans-man-p314083307.html",
+      "parse_ok": true,
+      "completeness": 1.0,
+      "grade": "FULL",
+      "missing": [],
+      "error": null
+    },
+    {
+      "url": "https://www.zara.com/il/he/striped-dress-girl-p312027620.html",
+      "parse_ok": true,
+      "completeness": 1.0,
+      "grade": "FULL",
+      "missing": [],
+      "error": null
+    }
+  ]
+}

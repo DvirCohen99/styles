@@ -1,0 +1,127 @@
+{
+  "source_site": "zara",
+  "product_url": "https://www.zara.com/il/he/שמלת-מיני-ריב-p8749.html",
+  "extraction_method": "api",
+  "has_html_snapshot": false,
+  "html_snapshot_length": 0,
+  "json_ld_blocks": 0,
+  "script_payload_keys": [
+    "zara_product"
+  ],
+  "script_payload": {
+    "zara_product": {
+      "id": 8749,
+      "name": "שמלת מיני ריב",
+      "sku": "ZARA-001",
+      "description": "שמלת מיני ריב צמודה. ויסקוזה 95%, ספנדקס 5%.",
+      "sectionName": "WOMAN",
+      "familyName": "DRESSES",
+      "price": 15990,
+      "originalPrice": 0,
+      "detail": {
+        "colors": [
+          {
+            "id": 6463,
+            "name": "CORAL",
+            "sizes": [
+              {
+                "name": "XXS",
+                "sku": "ZARA-001-XXS",
+                "availability": "in_stock",
+                "stock": 5
+              },
+              {
+                "name": "XS",
+                "sku": "ZARA-001-XS",
+                "availability": "in_stock",
+                "stock": 5
+              },
+              {
+                "name": "S",
+                "sku": "ZARA-001-S",
+                "availability": "in_stock",
+                "stock": 5
+              },
+              {
+                "name": "M",
+                "sku": "ZARA-001-M",
+                "availability": "in_stock",
+                "stock": 5
+              },
+              {
+                "name": "L",
+                "sku": "ZARA-001-L",
+                "availability": "in_stock",
+                "stock": 5
+              }
+            ],
+            "xmedia": [
+              {
+                "path": "/zara-001/coral",
+                "name": "zara-001_coral_001",
+                "timestamp": "1700000000",
+                "datatype": "IMAGE"
+              },
+              {
+                "path": "/zara-001/coral",
+                "name": "zara-001_coral_002",
+                "timestamp": "1700000000",
+                "datatype": "IMAGE"
+              },
+              {
+                "path": "/zara-001/coral",
+                "name": "zara-001_coral_003",
+                "timestamp": "1700000000",
+                "datatype": "IMAGE"
+              }
+            ]
+          },
+          {
+            "id": 1979,
+            "name": "BLACK",
+            "sizes": [
+              {
+                "name": "XS",
+                "sku": "ZARA-001-XS",
+                "availability": "in_stock",
+                "stock": 5
+              },
+              {
+                "name": "S",
+                "sku": "ZARA-001-S",
+                "availability": "in_stock",
+                "stock": 5
+              },
+              {
+                "name": "M",
+                "sku": "ZARA-001-M",
+                "availability": "in_stock",
+                "stock": 5
+              },
+              {
+                "name": "L",
+                "sku": "ZARA-001-L",
+                "availability": "in_stock",
+                "stock": 5
+              }
+            ],
+            "xmedia": [
+              {
+                "path": "/zara-001/black",
+                "name": "zara-001_black_001",
+                "timestamp": "1700000000",
+                "datatype": "IMAGE"
+              },
+              {
+                "path": "/zara-001/black",
+                "name": "zara-001_black_002",
+                "timestamp": "1700000000",
+                "datatype": "IMAGE"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

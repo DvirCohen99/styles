@@ -1,0 +1,82 @@
+{
+  "audit_timestamp": "2026-03-10T08:50:06.329211+00:00",
+  "sources_tested": 10,
+  "grades": {
+    "FULL": 10,
+    "STRONG": 0,
+    "PARTIAL": 0,
+    "BLOCKED": 0
+  },
+  "sources": {
+    "renuar": {
+      "platform": "shopify",
+      "avg_completeness": 1.0,
+      "overall_grade": "FULL",
+      "samples_passed": 5,
+      "missing_across_samples": []
+    },
+    "zara": {
+      "platform": "custom",
+      "avg_completeness": 1.0,
+      "overall_grade": "FULL",
+      "samples_passed": 5,
+      "missing_across_samples": []
+    },
+    "castro": {
+      "platform": "custom",
+      "avg_completeness": 1.0,
+      "overall_grade": "FULL",
+      "samples_passed": 5,
+      "missing_across_samples": []
+    },
+    "sde_bar": {
+      "platform": "shopify",
+      "avg_completeness": 1.0,
+      "overall_grade": "FULL",
+      "samples_passed": 5,
+      "missing_across_samples": []
+    },
+    "lidor_bar": {
+      "platform": "shopify",
+      "avg_completeness": 1.0,
+      "overall_grade": "FULL",
+      "samples_passed": 5,
+      "missing_across_samples": []
+    },
+    "cstyle": {
+      "platform": "woocommerce",
+      "avg_completeness": 1.0,
+      "overall_grade": "FULL",
+      "samples_passed": 5,
+      "missing_across_samples": []
+    },
+    "hodula": {
+      "platform": "shopify",
+      "avg_completeness": 1.0,
+      "overall_grade": "FULL",
+      "samples_passed": 5,
+      "missing_across_samples": []
+    },
+    "shoshi_tamam": {
+      "platform": "shopify",
+      "avg_completeness": 1.0,
+      "overall_grade": "FULL",
+      "samples_passed": 5,
+      "missing_across_samples": []
+    },
+    "terminal_x": {
+      "platform": "magento",
+      "avg_completeness": 1.0,
+      "overall_grade": "FULL",
+      "samples_passed": 5,
+      "missing_across_samples": []
+    },
+    "adika": {
+      "platform": "custom",
+      "avg_completeness": 1.0,
+      "overall_grade": "FULL",
+      "samples_passed": 5,
+      "missing_across_samples": []
+    }
+  }
+}

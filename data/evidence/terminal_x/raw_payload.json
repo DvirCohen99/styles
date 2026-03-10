@@ -1,0 +1,163 @@
+{
+  "source_site": "terminal_x",
+  "product_url": "https://www.terminalx.com/new-balance-574-grey.html",
+  "extraction_method": "json_ld",
+  "has_html_snapshot": true,
+  "html_snapshot_length": 4082,
+  "json_ld_blocks": 2,
+  "script_payload_keys": [
+    "magento_product"
+  ],
+  "json_ld_data": [
+    {
+      "@context": "https://schema.org",
+      "@type": "Product",
+      "name": "נעלי New Balance 574",
+      "description": "נעלי ספורט קלאסיות מבית New Balance.",
+      "sku": "ML574EVG",
+      "image": [
+        "https://media.terminalx.com/catalog/product/cache/new-balance-574-grey_main.jpg",
+        "https://media.terminalx.com/catalog/product/cache/new-balance-574-grey_side.jpg",
+        "https://media.terminalx.com/catalog/product/cache/new-balance-574-grey_detail.jpg"
+      ],
+      "brand": {
+        "@type": "Brand",
+        "name": "New Balance"
+      },
+      "offers": [
+        {
+          "@type": "Offer",
+          "price": "459",
+          "priceCurrency": "ILS",
+          "availability": "https://schema.org/InStock",
+          "sku": "ML574EVG-40"
+        },
+        {
+          "@type": "Offer",
+          "price": "459",
+          "priceCurrency": "ILS",
+          "availability": "https://schema.org/InStock",
+          "sku": "ML574EVG-41"
+        },
+        {
+          "@type": "Offer",
+          "price": "459",
+          "priceCurrency": "ILS",
+          "availability": "https://schema.org/InStock",
+          "sku": "ML574EVG-42"
+        },
+        {
+          "@type": "Offer",
+          "price": "459",
+          "priceCurrency": "ILS",
+          "availability": "https://schema.org/InStock",
+          "sku": "ML574EVG-43"
+        },
+        {
+          "@type": "Offer",
+          "price": "459",
+          "priceCurrency": "ILS",
+          "availability": "https://schema.org/InStock",
+          "sku": "ML574EVG-44"
+        },
+        {
+          "@type": "Offer",
+          "price": "459",
+          "priceCurrency": "ILS",
+          "availability": "https://schema.org/InStock",
+          "sku": "ML574EVG-45"
+        }
+      ]
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "ראשי",
+          "item": "https://www.terminalx.com"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "גברים",
+          "item": "https://www.terminalx.com/men"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "נעליים",
+          "item": "https://www.terminalx.com/men/נעליים"
+        },
+        {
+          "@type": "ListItem",
+          "position": 4,
+          "name": "New Balance נעלי New Balance 574"
+        }
+      ]
+    }
+  ],
+  "script_payload": {
+    "magento_product": {
+      "component": "Magento_Swatches/js/swatch-renderer",
+      "product": {
+        "productName": "נעלי New Balance 574",
+        "price": 459,
+        "regularPrice": 459
+      },
+      "attributes": {
+        "201": {
+          "id": "201",
+          "code": "size",
+          "label": "מידה",
+          "options": [
+            {
+              "id": "300",
+              "label": "40",
+              "products": [
+                "1000"
+              ]
+            },
+            {
+              "id": "301",
+              "label": "41",
+              "products": [
+                "1001"
+              ]
+            },
+            {
+              "id": "302",
+              "label": "42",
+              "products": [
+                "1002"
+              ]
+            },
+            {
+              "id": "303",
+              "label": "43",
+              "products": [
+                "1003"
+              ]
+            },
+            {
+              "id": "304",
+              "label": "44",
+              "products": [
+                "1004"
+              ]
+            },
+            {
+              "id": "305",
+              "label": "45",
+              "products": [
+                "1005"
+              ]
+            }
+          ]
+        }
+      }
+    }
+  }
+}

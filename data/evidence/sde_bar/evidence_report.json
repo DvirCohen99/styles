@@ -1,0 +1,81 @@
+{
+  "source": "sde_bar",
+  "platform": "shopify",
+  "audit_timestamp": "2026-03-10T08:50:06.329211+00:00",
+  "http_mode": "FIXTURE (sandbox blocks outbound HTTP)",
+  "samples_tested": 5,
+  "samples_passed": 5,
+  "avg_completeness": 1.0,
+  "overall_grade": "FULL",
+  "completeness_holds": true,
+  "missing_across_samples": [],
+  "field_presence_audit": {
+    "product_name": true,
+    "current_price": true,
+    "image_urls": true,
+    "category": true,
+    "description": true,
+    "sizes_available": true,
+    "colors_available": true,
+    "brand": true,
+    "stock_status": true,
+    "sku_or_ref": true
+  },
+  "sample_product_paths": [
+    "data/evidence/sde_bar/product_1.json",
+    "data/evidence/sde_bar/product_2.json",
+    "data/evidence/sde_bar/product_3.json"
+  ],
+  "raw_payload_path": "data/evidence/sde_bar/raw_payload.json",
+  "variant_path": "data/evidence/sde_bar/variant_example.json",
+  "source_stats_path": "data/evidence/sde_bar/source_stats.json",
+  "discovered_urls": [
+    "https://www.sdebar.co.il/products/linen-crop-shirt",
+    "https://www.sdebar.co.il/products/ruffle-mini-dress",
+    "https://www.sdebar.co.il/products/tie-mini-skirt",
+    "https://www.sdebar.co.il/products/basic-cardigan",
+    "https://www.sdebar.co.il/products/wide-cotton-trousers"
+  ],
+  "sample_results": [
+    {
+      "url": "https://www.sdebar.co.il/products/linen-crop-shirt",
+      "parse_ok": true,
+      "completeness": 1.0,
+      "grade": "FULL",
+      "missing": [],
+      "error": null
+    },
+    {
+      "url": "https://www.sdebar.co.il/products/ruffle-mini-dress",
+      "parse_ok": true,
+      "completeness": 1.0,
+      "grade": "FULL",
+      "missing": [],
+      "error": null
+    },
+    {
+      "url": "https://www.sdebar.co.il/products/tie-mini-skirt",
+      "parse_ok": true,
+      "completeness": 1.0,
+      "grade": "FULL",
+      "missing": [],
+      "error": null
+    },
+    {
+      "url": "https://www.sdebar.co.il/products/basic-cardigan",
+      "parse_ok": true,
+      "completeness": 1.0,
+      "grade": "FULL",
+      "missing": [],
+      "error": null
+    },
+    {
+      "url": "https://www.sdebar.co.il/products/wide-cotton-trousers",
+      "parse_ok": true,
+      "completeness": 1.0,
+      "grade": "FULL",
+      "missing": [],
+      "error": null
+    }
+  ]
+}

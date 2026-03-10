@@ -1,0 +1,81 @@
+{
+  "source": "castro",
+  "platform": "custom",
+  "audit_timestamp": "2026-03-10T08:50:06.329211+00:00",
+  "http_mode": "FIXTURE (sandbox blocks outbound HTTP)",
+  "samples_tested": 5,
+  "samples_passed": 5,
+  "avg_completeness": 1.0,
+  "overall_grade": "FULL",
+  "completeness_holds": true,
+  "missing_across_samples": [],
+  "field_presence_audit": {
+    "product_name": true,
+    "current_price": true,
+    "image_urls": true,
+    "category": true,
+    "description": true,
+    "sizes_available": true,
+    "colors_available": true,
+    "brand": true,
+    "stock_status": true,
+    "sku_or_ref": true
+  },
+  "sample_product_paths": [
+    "data/evidence/castro/product_1.json",
+    "data/evidence/castro/product_2.json",
+    "data/evidence/castro/product_3.json"
+  ],
+  "raw_payload_path": "data/evidence/castro/raw_payload.json",
+  "variant_path": null,
+  "source_stats_path": "data/evidence/castro/source_stats.json",
+  "discovered_urls": [
+    "https://www.castro.com/he/product/jeans-mom-skinny",
+    "https://www.castro.com/he/product/mini-button-dress",
+    "https://www.castro.com/he/product/basic-cotton-tee",
+    "https://www.castro.com/he/product/cargo-men-trousers",
+    "https://www.castro.com/he/product/short-zip-jacket"
+  ],
+  "sample_results": [
+    {
+      "url": "https://www.castro.com/he/product/jeans-mom-skinny",
+      "parse_ok": true,
+      "completeness": 1.0,
+      "grade": "FULL",
+      "missing": [],
+      "error": null
+    },
+    {
+      "url": "https://www.castro.com/he/product/mini-button-dress",
+      "parse_ok": true,
+      "completeness": 1.0,
+      "grade": "FULL",
+      "missing": [],
+      "error": null
+    },
+    {
+      "url": "https://www.castro.com/he/product/basic-cotton-tee",
+      "parse_ok": true,
+      "completeness": 1.0,
+      "grade": "FULL",
+      "missing": [],
+      "error": null
+    },
+    {
+      "url": "https://www.castro.com/he/product/cargo-men-trousers",
+      "parse_ok": true,
+      "completeness": 1.0,
+      "grade": "FULL",
+      "missing": [],
+      "error": null
+    },
+    {
+      "url": "https://www.castro.com/he/product/short-zip-jacket",
+      "parse_ok": true,
+      "completeness": 1.0,
+      "grade": "FULL",
+      "missing": [],
+      "error": null
+    }
+  ]
+}
