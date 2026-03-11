@@ -15,6 +15,7 @@ dependencies = [
     "tenacity>=8.2.3",
     "rich>=13.7.1",
     "python-dotenv>=1.0.1",
+    "flask>=3.0.0",
 ]
 
 [project.optional-dependencies]
@@ -29,9 +30,11 @@ dev     = [
 [project.scripts]
 dostyle         = "engine.cli.commands:cli"
 dostyle-scraper = "engine.cli.commands:cli"
+dostyle-sync    = "engine.cli.sync_commands:cli"
+dostyle-monitor = "sync:start_monitor"
 
 [tool.setuptools.packages.find]
-include = ["engine*"]
+include = ["engine*", "monitor*"]
 
 [tool.pytest.ini_options]
 testpaths  = ["tests"]

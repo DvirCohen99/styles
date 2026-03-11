@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}DoStyle Monitor{% endblock %} — DoStyle</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: { mono: ['JetBrains Mono', 'Fira Code', 'Courier New', 'monospace'] },
+          colors: {
+            surface: { DEFAULT: '#0d1117', 1: '#161b22', 2: '#21262d', 3: '#30363d' },
+            brand: { DEFAULT: '#58a6ff', dim: '#1f6feb' },
+            ok: '#3fb950',
+            warn: '#d29922',
+            fail: '#f85149',
+            muted: '#8b949e',
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    html, body { background: #0d1117; color: #e6edf3; font-family: 'JetBrains Mono', monospace; min-height: 100vh; }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #161b22; }
+    ::-webkit-scrollbar-thumb { background: #30363d; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #8b949e; }
+
+    /* Nav */
+    .nav-link { @apply px-3 py-2 text-sm rounded text-gray-400 hover:text-white hover:bg-gray-800 transition-colors; }
+    .nav-link.active { @apply text-blue-400 bg-gray-800; }
+
+    /* Cards */
+    .card { background: #161b22; border: 1px solid #30363d; border-radius: 8px; }
+    .card-inner { background: #21262d; border: 1px solid #30363d; border-radius: 6px; }
+
+    /* Badges */
+    .badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; }
+    .badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
+    .badge-ok { background: rgba(63,185,80,.15); color: #3fb950; }
+    .badge-ok::before { background: #3fb950; }
+    .badge-idle { background: rgba(139,148,158,.15); color: #8b949e; }
+    .badge-idle::before { background: #8b949e; }
+    .badge-running { background: rgba(88,166,255,.15); color: #58a6ff; animation: pulse-badge 2s infinite; }
+    .badge-running::before { background: #58a6ff; animation: pulse-dot 2s infinite; }
+    .badge-failed { background: rgba(248,81,73,.15); color: #f85149; }
+    .badge-failed::before { background: #f85149; }
+    .badge-warn { background: rgba(210,153,34,.15); color: #d29922; }
+    .badge-warn::before { background: #d29922; }
+
+    @keyframes pulse-badge { 0%,100% { opacity: 1; } 50% { opacity: .7; } }
+    @keyframes pulse-dot { 0%,100% { transform: scale(1); } 50% { transform: scale(1.3); } }
+
+    /* Tables */
+    .data-table { width: 100%; border-collapse: separate; border-spacing: 0; }
+    .data-table th { background: #161b22; color: #8b949e; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; padding: 10px 12px; text-align: left; border-bottom: 1px solid #30363d; position: sticky; top: 0; z-index: 1; }
+    .data-table td { padding: 10px 12px; border-bottom: 1px solid #21262d; font-size: 13px; vertical-align: middle; }
+    .data-table tr:hover td { background: #1c2128; }
+    .data-table tr:last-child td { border-bottom: none; }
+
+    /* Quality indicators */
+    .quality-high { color: #3fb950; }
+    .quality-mid  { color: #d29922; }
+    .quality-low  { color: #f85149; }
+
+    /* Event types */
+    .evt-created  { color: #3fb950; }
+    .evt-updated  { color: #58a6ff; }
+    .evt-price    { color: #d29922; }
+    .evt-stock    { color: #bc8cff; }
+    .evt-sale     { color: #ff7b72; }
+    .evt-missing  { color: #8b949e; }
+    .evt-failed   { color: #f85149; }
+    .evt-started  { color: #79c0ff; }
+
+    /* Stat tiles */
+    .stat-tile { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px; }
+    .stat-tile .label { color: #8b949e; font-size: 11px; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 8px; }
+    .stat-tile .value { font-size: 28px; font-weight: 600; line-height: 1; }
+
+    /* Source card */
+    .source-card { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 16px; transition: border-color .2s; }
+    .source-card:hover { border-color: #58a6ff; }
+
+    /* Live indicator */
+    .live-dot { display: inline-block; width: 8px; height: 8px; background: #3fb950; border-radius: 50%; animation: pulse-dot 2s infinite; }
+
+    /* Truncate */
+    .truncate-url { max-width: 240px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    /* Activity feed */
+    .feed-item { display: flex; gap: 12px; padding: 8px 0; border-bottom: 1px solid #21262d; align-items: flex-start; }
+    .feed-item:last-child { border-bottom: none; }
+    .feed-icon { width: 32px; height: 32px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+
+    /* Scrollable panel */
+    .scroll-panel { max-height: 600px; overflow-y: auto; }
+
+    /* Image thumbnail */
+    .product-thumb { width: 48px; height: 48px; object-fit: cover; border-radius: 4px; background: #21262d; }
+
+    /* Toast area */
+    #toasts { position: fixed; bottom: 20px; right: 20px; z-index: 999; display: flex; flex-direction: column; gap: 8px; }
+    .toast { background: #21262d; border: 1px solid #30363d; border-radius: 6px; padding: 10px 16px; font-size: 12px; color: #e6edf3; animation: slide-in .3s; }
+    @keyframes slide-in { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+  </style>
+</head>
+<body class="min-h-screen">
+
+<!-- Nav -->
+<nav class="border-b border-gray-800 bg-surface sticky top-0 z-50">
+  <div class="max-w-screen-2xl mx-auto px-4 flex items-center gap-2 h-12">
+    <a href="/" class="font-bold text-sm text-white mr-4 flex items-center gap-2">
+      <span class="text-blue-400">◈</span> DoStyle Monitor
+    </a>
+    <a href="/" class="nav-link {% if request.path == '/' %}active{% endif %}">Dashboard</a>
+    <a href="/sources" class="nav-link {% if request.path == '/sources' %}active{% endif %}">Sources</a>
+    <a href="/activity" class="nav-link {% if request.path == '/activity' %}active{% endif %}">Activity</a>
+    <a href="/products" class="nav-link {% if request.path.startswith('/products') %}active{% endif %}">Products</a>
+    <div class="ml-auto flex items-center gap-3">
+      {% if db_available is defined and db_available %}
+        <span class="text-xs text-green-400 flex items-center gap-1.5"><span class="live-dot"></span> Firestore Live</span>
+      {% else %}
+        <span class="text-xs text-red-400">⚠ Firestore Offline</span>
+      {% endif %}
+      <span class="text-xs text-gray-600" id="clock">--:--:--</span>
+    </div>
+  </div>
+</nav>
+
+<!-- Main content -->
+<main class="max-w-screen-2xl mx-auto px-4 py-6">
+  {% block content %}{% endblock %}
+</main>
+
+<!-- Toast container -->
+<div id="toasts"></div>
+
+<script>
+  // Clock
+  function tick() {
+    const d = new Date();
+    document.getElementById('clock').textContent = d.toTimeString().slice(0,8) + ' UTC';
+  }
+  setInterval(tick, 1000);
+  tick();
+
+  // Toast helper
+  function toast(msg, type='info') {
+    const el = document.createElement('div');
+    el.className = 'toast';
+    el.style.borderColor = type === 'ok' ? '#3fb950' : type === 'err' ? '#f85149' : '#30363d';
+    el.textContent = msg;
+    document.getElementById('toasts').appendChild(el);
+    setTimeout(() => el.remove(), 4000);
+  }
+
+  // Auto-refresh helper
+  function autoRefresh(ms) {
+    setTimeout(() => location.reload(), ms);
+  }
+</script>
+
+{% block scripts %}{% endblock %}
+</body>
+</html>

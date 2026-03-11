@@ -1,0 +1,234 @@
+{% extends "layout.html" %}
+{% block title %}{{ product.get('product_name', 'Product') }}{% endblock %}
+
+{% block content %}
+{% set p = product %}
+{% set qs = (p.get('data_quality_score') or 0) | float %}
+
+<!-- Breadcrumb -->
+<div class="flex items-center gap-2 text-xs text-gray-500 mb-6">
+  <a href="/products" class="hover:text-blue-400">Products</a>
+  <span>›</span>
+  <span class="text-gray-400">{{ p.get('source_site', '?') }}</span>
+  <span>›</span>
+  <span class="text-gray-300 truncate max-w-xs">{{ p.get('product_name', p.get('product_id', '?'))[:60] }}</span>
+</div>
+
+<div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+
+  <!-- Left: Images + core info -->
+  <div class="xl:col-span-2 flex flex-col gap-4">
+
+    <!-- Images -->
+    {% set images = p.get('image_urls') or [] %}
+    {% if images %}
+    <div class="card p-4">
+      <div class="text-xs text-gray-500 mb-3">Images ({{ images | length }})</div>
+      <div class="flex gap-2 overflow-x-auto pb-1">
+        {% for img in images %}
+        <a href="{{ img }}" target="_blank" class="flex-shrink-0">
+          <img src="{{ img }}" alt="" class="h-40 w-auto rounded object-cover border border-gray-800 hover:border-blue-500 transition-colors" loading="lazy" onerror="this.parentElement.style.display='none'">
+        </a>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Product core -->
+    <div class="card p-4">
+      <div class="flex items-start justify-between gap-4 mb-4">
+        <div>
+          <h1 class="text-lg font-semibold text-white">{{ p.get('product_name') or 'Untitled' }}</h1>
+          <div class="flex items-center gap-3 mt-2 flex-wrap">
+            {% if p.get('brand') %}
+            <span class="text-xs text-gray-400">{{ p.brand }}</span>
+            {% endif %}
+            {% if p.get('is_on_sale') %}
+            <span class="badge badge-warn">sale</span>
+            {% endif %}
+            {% if p.get('is_new_collection') %}
+            <span class="badge" style="background:rgba(188,140,255,.15);color:#bc8cff;">new collection</span>
+            {% endif %}
+            {% if p.get('is_missing_from_source') %}
+            <span class="badge badge-warn">missing from source</span>
+            {% endif %}
+          </div>
+        </div>
+        <a href="{{ p.get('product_url') }}" target="_blank" class="text-blue-400 hover:underline text-xs flex-shrink-0">View source ↗</a>
+      </div>
+
+      <!-- Pricing -->
+      <div class="flex items-end gap-4 mb-4 pb-4 border-b border-gray-800">
+        {% if p.get('current_price') %}
+        <div>
+          <div class="text-xs text-gray-500 mb-1">Current price</div>
+          <div class="text-2xl font-bold text-white">₪{{ p.current_price | int }}</div>
+        </div>
+        {% endif %}
+        {% if p.get('original_price') and p.original_price != p.current_price %}
+        <div>
+          <div class="text-xs text-gray-500 mb-1">Original</div>
+          <div class="text-gray-400 line-through">₪{{ p.original_price | int }}</div>
+        </div>
+        {% if p.get('discount_percent') %}
+        <div class="text-yellow-400 font-semibold">-{{ p.discount_percent | int }}%</div>
+        {% endif %}
+        {% endif %}
+      </div>
+
+      <!-- Details grid -->
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+        {% for label, value in [
+          ('Category', p.get('category')),
+          ('Subcategory', p.get('subcategory')),
+          ('Collection', p.get('collection')),
+          ('Collection type', p.get('collection_type')),
+          ('Gender', p.get('gender_target')),
+          ('Stock status', p.get('stock_status')),
+        ] %}
+        {% if value %}
+        <div class="card-inner px-3 py-2">
+          <div class="text-xs text-gray-500">{{ label }}</div>
+          <div class="text-sm text-gray-200">{{ value }}</div>
+        </div>
+        {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Variants -->
+    {% if p.get('colors_available') or p.get('sizes_available') %}
+    <div class="card p-4">
+      <div class="text-xs text-gray-500 mb-3 uppercase tracking-wide">Variants</div>
+      <div class="grid grid-cols-2 gap-4">
+        {% if p.get('colors_available') %}
+        <div>
+          <div class="text-xs text-gray-400 mb-2">Colors ({{ p.colors_available | length }})</div>
+          <div class="flex flex-wrap gap-1.5">
+            {% for c in p.colors_available %}
+            <span class="px-2 py-1 bg-gray-800 border border-gray-700 rounded text-xs text-gray-300">{{ c }}</span>
+            {% endfor %}
+          </div>
+        </div>
+        {% endif %}
+        {% if p.get('sizes_available') %}
+        <div>
+          <div class="text-xs text-gray-400 mb-2">Sizes ({{ p.sizes_available | length }})</div>
+          <div class="flex flex-wrap gap-1.5">
+            {% for s in p.sizes_available %}
+            <span class="px-2 py-1 bg-gray-800 border border-gray-700 rounded text-xs text-gray-300 font-mono">{{ s }}</span>
+            {% endfor %}
+          </div>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Descriptions -->
+    {% if p.get('original_description') or p.get('short_description') %}
+    <div class="card p-4">
+      <div class="text-xs text-gray-500 mb-3 uppercase tracking-wide">Description</div>
+      {% if p.get('short_description') %}
+      <p class="text-sm text-gray-300 mb-3">{{ p.short_description }}</p>
+      {% endif %}
+      {% if p.get('original_description') and p.original_description != p.get('short_description') %}
+      <details class="text-sm text-gray-400">
+        <summary class="cursor-pointer text-xs text-blue-400 hover:underline">Original description</summary>
+        <div class="mt-2 text-gray-400 whitespace-pre-wrap text-xs">{{ p.original_description[:2000] }}</div>
+      </details>
+      {% endif %}
+    </div>
+    {% endif %}
+
+  </div>
+
+  <!-- Right: system metadata -->
+  <div class="flex flex-col gap-4">
+
+    <!-- Quality + system info -->
+    <div class="card p-4">
+      <div class="text-xs text-gray-500 mb-3 uppercase tracking-wide">System Info</div>
+
+      <!-- Quality score -->
+      <div class="mb-4">
+        <div class="flex justify-between text-xs mb-1">
+          <span class="text-gray-500">Data quality</span>
+          <span class="{{ quality_color(qs) }}">{{ '%.0f%%' | format(qs * 100) if qs else 'N/A' }}</span>
+        </div>
+        <div class="h-2 bg-gray-800 rounded-full">
+          <div class="h-2 rounded-full {{ 'bg-green-500' if qs >= 0.8 else 'bg-yellow-500' if qs >= 0.5 else 'bg-red-500' }}"
+               style="width: {{ '%.1f%%' | format(qs * 100) }}"></div>
+        </div>
+      </div>
+
+      <div class="space-y-2 text-xs">
+        {% for label, value in [
+          ('Product ID', p.get('product_id', '')[:16] + '...'),
+          ('Source site', p.get('source_site')),
+          ('Source mode', p.get('source_mode')),
+          ('Parser version', p.get('parser_version')),
+          ('Parser status', p.get('parser_status')),
+          ('Confidence', ('%.0f%%' | format((p.get('extraction_confidence') or 0) * 100))),
+          ('Image count', p.get('image_count')),
+        ] %}
+        {% if value %}
+        <div class="flex justify-between">
+          <span class="text-gray-500">{{ label }}</span>
+          <span class="text-gray-300 font-mono">{{ value }}</span>
+        </div>
+        {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Timestamps -->
+    <div class="card p-4">
+      <div class="text-xs text-gray-500 mb-3 uppercase tracking-wide">Timestamps</div>
+      <div class="space-y-2 text-xs">
+        {% for label, value in [
+          ('First seen', p.get('first_seen_at')),
+          ('Last seen', p.get('last_seen_at')),
+          ('Price changed', p.get('last_price_change_at')),
+          ('Stock changed', p.get('last_stock_change_at')),
+        ] %}
+        <div class="flex justify-between gap-2">
+          <span class="text-gray-500">{{ label }}</span>
+          <span class="text-gray-300 tabular-nums">{{ ts_ago(value) if value else '-' }}</span>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Warnings -->
+    {% if p.get('warnings') %}
+    <div class="card p-4">
+      <div class="text-xs text-yellow-500 mb-3 uppercase tracking-wide">Warnings ({{ p.warnings | length }})</div>
+      <ul class="space-y-1">
+        {% for w in p.warnings %}
+        <li class="text-xs text-yellow-300">⚠ {{ w }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+
+    <!-- Raw breadcrumbs -->
+    {% if p.get('breadcrumbs') %}
+    <div class="card p-4">
+      <div class="text-xs text-gray-500 mb-2 uppercase tracking-wide">Breadcrumbs</div>
+      <div class="text-xs text-gray-400">{{ p.breadcrumbs | join(' › ') }}</div>
+    </div>
+    {% endif %}
+
+    <!-- Normalized fields (raw) -->
+    <div class="card p-4">
+      <div class="text-xs text-gray-500 mb-3 uppercase tracking-wide">Raw Fields</div>
+      <details>
+        <summary class="cursor-pointer text-xs text-blue-400 hover:underline">Show all fields</summary>
+        <pre class="mt-3 text-xs text-gray-400 overflow-x-auto whitespace-pre-wrap" style="max-height:400px;">{{ p | tojson(indent=2) }}</pre>
+      </details>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

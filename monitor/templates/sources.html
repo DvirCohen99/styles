@@ -1,0 +1,123 @@
+{% extends "layout.html" %}
+{% block title %}Sources{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-between mb-6">
+  <div>
+    <h1 class="text-xl font-semibold text-white">Source Grid</h1>
+    <p class="text-xs text-gray-500 mt-1">Live sync state for all {{ sources | length }} sources</p>
+  </div>
+  <button onclick="location.reload()" class="text-xs text-gray-400 hover:text-white px-3 py-1.5 border border-gray-700 rounded hover:border-gray-500 transition-colors">
+    ↻ Refresh
+  </button>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+  {% for src in sources %}
+  {% set state = src.state %}
+  {% set sstats = src.stats %}
+  {% set job_status = state.get('current_job_status', 'idle') %}
+  {% set health = sstats.get('parser_health_status', 'unknown') %}
+
+  <div class="source-card">
+    <!-- Header -->
+    <div class="flex items-start justify-between mb-3">
+      <div>
+        <div class="font-semibold text-white">{{ src.name }}</div>
+        <div class="text-xs text-gray-500 mt-0.5">{{ src.platform }} · {{ src.key }}</div>
+      </div>
+      <div class="flex flex-col items-end gap-1">
+        <span class="badge {{ status_badge(job_status) }}">{{ job_status }}</span>
+        {% if job_status == 'running' %}
+        <span class="text-xs text-gray-400">{{ state.get('current_stage', '') }}</span>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Message (if running) -->
+    {% if state.get('current_message') and job_status == 'running' %}
+    <div class="text-xs text-blue-300 mb-3 truncate">{{ state.get('current_message') }}</div>
+    {% endif %}
+
+    <!-- Error (if failed) -->
+    {% if state.get('current_error') %}
+    <div class="text-xs text-red-400 mb-3 truncate" title="{{ state.get('current_error') }}">
+      ⚠ {{ state.get('current_error')[:80] }}
+    </div>
+    {% endif %}
+
+    <!-- Stats grid -->
+    <div class="grid grid-cols-3 gap-2 mb-3">
+      <div class="card-inner px-3 py-2">
+        <div class="text-xs text-gray-500">Products</div>
+        <div class="text-sm font-semibold text-white">{{ sstats.get('total_live_products', '-') }}</div>
+      </div>
+      <div class="card-inner px-3 py-2">
+        <div class="text-xs text-gray-500">On Sale</div>
+        <div class="text-sm font-semibold text-yellow-400">{{ sstats.get('total_sale_products', '-') }}</div>
+      </div>
+      <div class="card-inner px-3 py-2">
+        <div class="text-xs text-gray-500">New Coll.</div>
+        <div class="text-sm font-semibold text-purple-400">{{ sstats.get('total_new_collection_products', '-') }}</div>
+      </div>
+      <div class="card-inner px-3 py-2">
+        <div class="text-xs text-gray-500">OOS</div>
+        <div class="text-sm font-semibold text-red-400">{{ sstats.get('total_out_of_stock_products', '-') }}</div>
+      </div>
+      <div class="card-inner px-3 py-2">
+        <div class="text-xs text-gray-500">Missing</div>
+        <div class="text-sm font-semibold text-gray-400">{{ sstats.get('total_missing_products', '-') }}</div>
+      </div>
+      <div class="card-inner px-3 py-2">
+        <div class="text-xs text-gray-500">Quality</div>
+        {% set qs = sstats.get('avg_quality_score', 0) | float %}
+        <div class="text-sm font-semibold {{ quality_color(qs) }}">{{ '%.0f%%' | format(qs * 100) if qs else '-' }}</div>
+      </div>
+    </div>
+
+    <!-- Timestamps -->
+    <div class="flex gap-4 text-xs text-gray-500 mb-3">
+      <div>
+        <span class="text-gray-600">last ok</span>
+        <span class="ml-1 text-gray-400">{{ ts_ago(sstats.get('last_successful_sync') or state.get('last_finished_at')) }}</span>
+      </div>
+      {% if sstats.get('last_failed_sync') %}
+      <div>
+        <span class="text-gray-600">last fail</span>
+        <span class="ml-1 text-red-400">{{ ts_ago(sstats.get('last_failed_sync')) }}</span>
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Success rate bar -->
+    {% set rate = (sstats.get('sync_success_rate', 1.0) or 1.0) | float %}
+    <div class="mb-3">
+      <div class="flex justify-between text-xs text-gray-500 mb-1">
+        <span>Sync success rate</span>
+        <span>{{ '%.0f%%' | format(rate * 100) }}</span>
+      </div>
+      <div class="h-1.5 bg-gray-800 rounded-full">
+        <div class="h-1.5 rounded-full transition-all {{ 'bg-green-500' if rate > 0.8 else 'bg-yellow-500' if rate > 0.5 else 'bg-red-500' }}"
+             style="width: {{ '%.1f%%' | format(rate * 100) }}"></div>
+      </div>
+    </div>
+
+    <!-- Footer actions -->
+    <div class="flex items-center justify-between pt-2 border-t border-gray-800">
+      <a href="{{ src.base_url }}" target="_blank" class="text-xs text-gray-500 hover:text-blue-400 transition-colors truncate max-w-[160px]">
+        {{ src.base_url }}
+      </a>
+      <a href="/products?source={{ src.key }}" class="text-xs text-blue-400 hover:underline ml-2 flex-shrink-0">
+        Inspect →
+      </a>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+autoRefresh(60000);
+</script>
+{% endblock %}

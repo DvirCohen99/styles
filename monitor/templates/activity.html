@@ -1,0 +1,200 @@
+{% extends "layout.html" %}
+{% block title %}Activity Feed{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-between mb-6">
+  <div>
+    <h1 class="text-xl font-semibold text-white flex items-center gap-2">
+      <span class="live-dot"></span> Live Activity Feed
+    </h1>
+    <p class="text-xs text-gray-500 mt-1">Real-time sync events and changes</p>
+  </div>
+  <div class="flex items-center gap-3">
+    <label class="flex items-center gap-2 text-xs text-gray-400">
+      <input type="checkbox" id="auto-refresh-toggle" checked class="accent-blue-500">
+      Auto-refresh 15s
+    </label>
+    <button onclick="loadFeed()" class="text-xs text-gray-400 hover:text-white px-3 py-1.5 border border-gray-700 rounded hover:border-gray-500 transition-colors">
+      ↻ Refresh
+    </button>
+  </div>
+</div>
+
+<!-- Filter bar -->
+<div class="card mb-4 px-4 py-3 flex flex-wrap gap-3 items-center">
+  <span class="text-xs text-gray-500">Filter:</span>
+  <select id="source-filter" onchange="loadFeed()" class="bg-gray-800 border border-gray-700 text-gray-300 text-xs rounded px-3 py-1.5 focus:outline-none focus:border-blue-500">
+    <option value="">All sources</option>
+    {% for event_type in ['sync_started','sync_completed','sync_failed','product_created','price_changed','stock_changed','sale_changed','product_disappeared'] %}
+    {% endfor %}
+  </select>
+  <select id="type-filter" onchange="loadFeed()" class="bg-gray-800 border border-gray-700 text-gray-300 text-xs rounded px-3 py-1.5 focus:outline-none focus:border-blue-500">
+    <option value="">All events</option>
+    <option value="sync_started">Sync started</option>
+    <option value="sync_completed">Sync completed</option>
+    <option value="sync_failed">Sync failed</option>
+    <option value="product_created">Product created</option>
+    <option value="price_changed">Price changed</option>
+    <option value="stock_changed">Stock changed</option>
+    <option value="sale_changed">Sale changed</option>
+    <option value="product_disappeared">Product disappeared</option>
+  </select>
+  <select id="limit-filter" onchange="loadFeed()" class="bg-gray-800 border border-gray-700 text-gray-300 text-xs rounded px-3 py-1.5 focus:outline-none focus:border-blue-500">
+    <option value="50">50 events</option>
+    <option value="100" selected>100 events</option>
+    <option value="200">200 events</option>
+  </select>
+  <span class="ml-auto text-xs text-gray-600" id="event-count"></span>
+</div>
+
+<!-- Feed container -->
+<div class="card">
+  <div id="feed" class="px-4 py-2 scroll-panel" style="max-height: calc(100vh - 280px)">
+    <div class="text-gray-600 text-xs py-8 text-center">Loading events...</div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const EVENT_COLORS = {
+  'sync_started':       'evt-started',
+  'sync_completed':     'evt-created',
+  'sync_failed':        'evt-failed',
+  'product_created':    'evt-created',
+  'price_changed':      'evt-price',
+  'stock_changed':      'evt-stock',
+  'sale_changed':       'evt-sale',
+  'product_disappeared':'evt-missing',
+};
+const EVENT_ICONS = {
+  'sync_started':       '▷',
+  'sync_completed':     '✓',
+  'sync_failed':        '✗',
+  'product_created':    '+',
+  'price_changed':      '₪',
+  'stock_changed':      '◈',
+  'sale_changed':       '%',
+  'product_disappeared':'○',
+};
+const EVENT_LABELS = {
+  'sync_started':       'Sync started',
+  'sync_completed':     'Sync completed',
+  'sync_failed':        'Sync failed',
+  'product_created':    'Product added',
+  'price_changed':      'Price changed',
+  'stock_changed':      'Stock changed',
+  'sale_changed':       'Sale changed',
+  'product_disappeared':'Product disappeared',
+};
+
+function formatValue(e) {
+  if (e.event_type === 'price_changed') {
+    const old = e.old_value != null ? `₪${e.old_value}` : '?';
+    const nw  = e.new_value != null ? `₪${e.new_value}` : '?';
+    return `<span class="text-gray-500">${old} → </span><span class="text-yellow-300">${nw}</span>`;
+  }
+  if (e.event_type === 'stock_changed') {
+    return `<span class="text-gray-500">${e.old_value || '?'} → </span><span class="text-purple-300">${e.new_value || '?'}</span>`;
+  }
+  if (e.event_type === 'sale_changed') {
+    const newSale = e.new_value;
+    return newSale ? '<span class="text-red-300">Now on sale</span>' : '<span class="text-gray-400">Sale ended</span>';
+  }
+  if (e.event_type === 'sync_completed' && e.products_created != null) {
+    return `<span class="text-green-400">+${e.products_created}</span> <span class="text-blue-400">~${e.products_updated || 0}</span> <span class="text-gray-500">${e.duration_sec || '?'}s</span>`;
+  }
+  if (e.error) {
+    return `<span class="text-red-400">${e.error.slice(0,60)}</span>`;
+  }
+  return '';
+}
+
+async function loadFeed() {
+  const feed = document.getElementById('feed');
+  const source = document.getElementById('source-filter').value;
+  const limit = document.getElementById('limit-filter').value;
+
+  try {
+    let url = `/api/activity?limit=${limit}`;
+    if (source) url += `&source=${source}`;
+
+    const res = await fetch(url);
+    const events = await res.json();
+
+    const typeFilter = document.getElementById('type-filter').value;
+    const filtered = typeFilter ? events.filter(e => e.event_type === typeFilter) : events;
+
+    document.getElementById('event-count').textContent = `${filtered.length} events`;
+
+    if (!filtered.length) {
+      feed.innerHTML = '<div class="text-gray-600 text-xs py-8 text-center">No events found</div>';
+      return;
+    }
+
+    feed.innerHTML = filtered.map(e => {
+      const type  = e.event_type || 'unknown';
+      const color = EVENT_COLORS[type] || 'text-gray-400';
+      const icon  = EVENT_ICONS[type] || '·';
+      const label = EVENT_LABELS[type] || type;
+      const ts    = e.timestamp ? e.timestamp.slice(0,19).replace('T',' ') : '';
+      const src   = e.source_key || '?';
+      const name  = e.product_name || '';
+      const extra = formatValue(e);
+      const pid   = e.product_id || '';
+
+      return `<div class="feed-item">
+        <div class="text-base ${color} w-6 text-center flex-shrink-0 pt-0.5" title="${type}">${icon}</div>
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="${color} text-xs font-semibold">${label}</span>
+            <span class="text-gray-600 text-xs">[${src}]</span>
+            ${extra ? `<span class="text-xs">${extra}</span>` : ''}
+          </div>
+          ${name ? `<div class="text-gray-400 text-xs mt-0.5 truncate">${name}${pid ? ` <a href="/products/${pid}" class="text-blue-500 hover:underline ml-1">→</a>` : ''}</div>` : ''}
+        </div>
+        <div class="text-gray-600 text-xs flex-shrink-0 tabular-nums">${ts}</div>
+      </div>`;
+    }).join('');
+
+  } catch(err) {
+    feed.innerHTML = '<div class="text-red-400 text-xs py-8 text-center">Failed to load events</div>';
+  }
+}
+
+loadFeed();
+
+// Load source list into filter
+async function populateSourceFilter() {
+  try {
+    const res = await fetch('/api/sources');
+    const data = await res.json();
+    const sel = document.getElementById('source-filter');
+    Object.keys(data).sort().forEach(key => {
+      const opt = document.createElement('option');
+      opt.value = key;
+      opt.textContent = data[key].meta?.source_name || key;
+      sel.appendChild(opt);
+    });
+  } catch(e) {}
+}
+populateSourceFilter();
+
+// Auto-refresh
+let refreshTimer = null;
+function startAutoRefresh() {
+  if (refreshTimer) clearInterval(refreshTimer);
+  refreshTimer = setInterval(loadFeed, 15000);
+}
+function stopAutoRefresh() {
+  if (refreshTimer) clearInterval(refreshTimer);
+  refreshTimer = null;
+}
+
+document.getElementById('auto-refresh-toggle').addEventListener('change', (e) => {
+  if (e.target.checked) startAutoRefresh();
+  else stopAutoRefresh();
+});
+startAutoRefresh();
+</script>
+{% endblock %}

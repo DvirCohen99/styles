@@ -1,0 +1,195 @@
+{% extends "layout.html" %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-between mb-6">
+  <div>
+    <h1 class="text-xl font-semibold text-white">System Dashboard</h1>
+    <p class="text-xs text-gray-500 mt-1">Real-time ingestion overview</p>
+  </div>
+  <div class="flex items-center gap-3">
+    {% if active_jobs > 0 %}
+      <span class="badge badge-running">{{ active_jobs }} active job{{ 's' if active_jobs != 1 }}</span>
+    {% endif %}
+    <button onclick="location.reload()" class="text-xs text-gray-400 hover:text-white px-3 py-1.5 border border-gray-700 rounded hover:border-gray-500 transition-colors">
+      ↻ Refresh
+    </button>
+  </div>
+</div>
+
+<!-- Stat tiles row -->
+<div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3 mb-6">
+  <div class="stat-tile col-span-2 md:col-span-1">
+    <div class="label">Total Products</div>
+    <div class="value text-white">{{ stats.get('total_products', 0) | int }}</div>
+  </div>
+  <div class="stat-tile">
+    <div class="label">Updated Today</div>
+    <div class="value text-blue-400">{{ stats.get('products_updated_today', 0) | int }}</div>
+  </div>
+  <div class="stat-tile">
+    <div class="label">Added Today</div>
+    <div class="value text-green-400">{{ stats.get('products_added_today', 0) | int }}</div>
+  </div>
+  <div class="stat-tile">
+    <div class="label">On Sale</div>
+    <div class="value text-yellow-400">{{ stats.get('sale_products', 0) | int }}</div>
+  </div>
+  <div class="stat-tile">
+    <div class="label">New Collection</div>
+    <div class="value text-purple-400">{{ stats.get('new_collection_products', 0) | int }}</div>
+  </div>
+  <div class="stat-tile">
+    <div class="label">Healthy Sources</div>
+    <div class="value text-green-400">{{ healthy_sources }}</div>
+  </div>
+  <div class="stat-tile">
+    <div class="label">Failing Sources</div>
+    <div class="value {{ 'text-red-400' if failing_sources > 0 else 'text-gray-600' }}">{{ failing_sources }}</div>
+  </div>
+  <div class="stat-tile">
+    <div class="label">Warnings</div>
+    <div class="value {{ 'text-yellow-400' if warnings_count > 0 else 'text-gray-600' }}">{{ warnings_count }}</div>
+  </div>
+</div>
+
+<!-- Source status + by-source breakdown -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
+
+  <!-- Source sync states -->
+  <div class="card">
+    <div class="flex items-center justify-between px-4 py-3 border-b border-gray-800">
+      <span class="text-sm font-semibold text-white">Source Sync States</span>
+      <a href="/sources" class="text-xs text-blue-400 hover:underline">View all →</a>
+    </div>
+    <div class="scroll-panel">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Source</th>
+            <th>Status</th>
+            <th>Stage</th>
+            <th>Last Sync</th>
+            <th>Products</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for key in all_source_keys %}
+          {% set state = source_states.get(key, {}) %}
+          {% set sstats = source_stats.get(key, {}) %}
+          {% set job_status = state.get('current_job_status', 'idle') %}
+          <tr>
+            <td class="text-white font-medium">{{ key }}</td>
+            <td><span class="badge {{ status_badge(job_status) }}">{{ job_status }}</span></td>
+            <td class="text-gray-400 text-xs">{{ state.get('current_stage', '-') }}</td>
+            <td class="text-gray-500 text-xs">{{ ts_ago(state.get('last_finished_at')) }}</td>
+            <td class="text-gray-300">{{ sstats.get('total_live_products', '-') }}</td>
+          </tr>
+          {% else %}
+          <tr><td colspan="5" class="text-center text-gray-600 py-6">No source data</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Per-source product breakdown -->
+  <div class="card">
+    <div class="flex items-center justify-between px-4 py-3 border-b border-gray-800">
+      <span class="text-sm font-semibold text-white">Products by Source</span>
+      <a href="/products" class="text-xs text-blue-400 hover:underline">Browse →</a>
+    </div>
+    <div class="scroll-panel">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Source</th>
+            <th>Live</th>
+            <th>Sale</th>
+            <th>New Coll.</th>
+            <th>OOS</th>
+            <th>Quality</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for key in all_source_keys %}
+          {% set sstats = source_stats.get(key, {}) %}
+          {% set qs = sstats.get('avg_quality_score', 0) | float %}
+          <tr>
+            <td class="text-white font-medium">{{ key }}</td>
+            <td class="text-gray-300">{{ sstats.get('total_live_products', '-') }}</td>
+            <td class="text-yellow-400">{{ sstats.get('total_sale_products', '-') }}</td>
+            <td class="text-purple-400">{{ sstats.get('total_new_collection_products', '-') }}</td>
+            <td class="text-red-400">{{ sstats.get('total_out_of_stock_products', '-') }}</td>
+            <td class="{{ quality_color(qs) }}">{{ '%.0f%%' | format(qs * 100) if qs else '-' }}</td>
+          </tr>
+          {% else %}
+          <tr><td colspan="6" class="text-center text-gray-600 py-6">No stats data</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Recent activity preview -->
+<div class="card">
+  <div class="flex items-center justify-between px-4 py-3 border-b border-gray-800">
+    <span class="text-sm font-semibold text-white">Recent Activity</span>
+    <a href="/activity" class="text-xs text-blue-400 hover:underline">Live feed →</a>
+  </div>
+  <div id="activity-preview" class="px-4 py-2 scroll-panel" style="max-height:320px;">
+    <div class="text-gray-600 text-xs py-4 text-center">Loading...</div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+async function loadActivity() {
+  const el = document.getElementById('activity-preview');
+  try {
+    const res = await fetch('/api/activity?limit=30');
+    const events = await res.json();
+    if (!events.length) {
+      el.innerHTML = '<div class="text-gray-600 text-xs py-4 text-center">No recent events</div>';
+      return;
+    }
+    const colors = {
+      'sync_started': 'evt-started', 'sync_completed': 'evt-created',
+      'sync_failed': 'evt-failed', 'product_created': 'evt-created',
+      'price_changed': 'evt-price', 'stock_changed': 'evt-stock',
+      'sale_changed': 'evt-sale', 'product_disappeared': 'evt-missing',
+    };
+    const icons = {
+      'sync_started': '▷', 'sync_completed': '✓', 'sync_failed': '✗',
+      'product_created': '+', 'price_changed': '₪', 'stock_changed': '◈',
+      'sale_changed': '%', 'product_disappeared': '○',
+    };
+    el.innerHTML = events.map(e => {
+      const type = e.event_type || 'unknown';
+      const color = colors[type] || 'text-gray-400';
+      const icon = icons[type] || '·';
+      const ts = e.timestamp ? e.timestamp.slice(11,19) : '';
+      const name = e.product_name ? ` — <span class="text-gray-300">${e.product_name.slice(0,40)}</span>` : '';
+      return `<div class="feed-item">
+        <div class="text-xs ${color} w-6 text-center pt-0.5">${icon}</div>
+        <div class="flex-1 min-w-0">
+          <span class="${color} text-xs font-medium">${type}</span>
+          <span class="text-gray-500 text-xs ml-1">[${e.source_key || '?'}]</span>${name}
+        </div>
+        <div class="text-gray-600 text-xs flex-shrink-0">${ts}</div>
+      </div>`;
+    }).join('');
+  } catch(e) {
+    el.innerHTML = '<div class="text-red-400 text-xs py-4 text-center">Failed to load activity</div>';
+  }
+}
+
+loadActivity();
+// Refresh activity every 30s
+setInterval(loadActivity, 30000);
+// Refresh page every 5min
+autoRefresh(300000);
+</script>
+{% endblock %}

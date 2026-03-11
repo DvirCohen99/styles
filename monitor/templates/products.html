@@ -1,0 +1,126 @@
+{% extends "layout.html" %}
+{% block title %}Products{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-between mb-4">
+  <div>
+    <h1 class="text-xl font-semibold text-white">Products</h1>
+    <p class="text-xs text-gray-500 mt-1">{{ products | length }} products shown</p>
+  </div>
+</div>
+
+<!-- Filter bar -->
+<div class="card mb-4 px-4 py-3 flex flex-wrap gap-3 items-center">
+  <span class="text-xs text-gray-500">Filter:</span>
+  <form method="get" class="flex flex-wrap gap-3 items-center">
+    <select name="source" onchange="this.form.submit()" class="bg-gray-800 border border-gray-700 text-gray-300 text-xs rounded px-3 py-1.5 focus:outline-none focus:border-blue-500">
+      <option value="">All sources</option>
+      {% for key in source_keys %}
+      <option value="{{ key }}" {% if source_filter == key %}selected{% endif %}>{{ key }}</option>
+      {% endfor %}
+    </select>
+    <select name="sale" onchange="this.form.submit()" class="bg-gray-800 border border-gray-700 text-gray-300 text-xs rounded px-3 py-1.5 focus:outline-none focus:border-blue-500">
+      <option value="">All</option>
+      <option value="1" {% if sale_filter == '1' %}selected{% endif %}>On sale</option>
+      <option value="0" {% if sale_filter == '0' %}selected{% endif %}>Full price</option>
+    </select>
+    <select name="limit" onchange="this.form.submit()" class="bg-gray-800 border border-gray-700 text-gray-300 text-xs rounded px-3 py-1.5 focus:outline-none focus:border-blue-500">
+      <option value="50" {% if limit == 50 %}selected{% endif %}>50</option>
+      <option value="100" {% if limit == 100 %}selected{% endif %}>100</option>
+      <option value="200" {% if limit == 200 %}selected{% endif %}>200</option>
+      <option value="500" {% if limit == 500 %}selected{% endif %}>500</option>
+    </select>
+  </form>
+</div>
+
+<!-- Products table -->
+<div class="card overflow-hidden">
+  <div class="overflow-x-auto">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th style="width:56px">Image</th>
+          <th>Name</th>
+          <th>Source</th>
+          <th>Category</th>
+          <th>Collection</th>
+          <th>Price</th>
+          <th>Stock</th>
+          <th>Colors</th>
+          <th>Sizes</th>
+          <th>Quality</th>
+          <th>Last Seen</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in products %}
+        {% set qs = (p.get('data_quality_score') or 0) | float %}
+        <tr>
+          <td>
+            {% if p.get('primary_image_url') %}
+            <img src="{{ p.primary_image_url }}" alt="" class="product-thumb" loading="lazy" onerror="this.style.display='none'">
+            {% else %}
+            <div class="product-thumb flex items-center justify-center text-gray-700 text-xs">—</div>
+            {% endif %}
+          </td>
+          <td>
+            <div class="font-medium text-white text-sm" style="max-width:220px;">
+              {{ (p.get('product_name') or '')[:60] }}{% if (p.get('product_name') or '') | length > 60 %}…{% endif %}
+            </div>
+            {% if p.get('is_on_sale') %}
+            <span class="badge badge-warn" style="margin-top:4px;">sale</span>
+            {% endif %}
+            {% if p.get('is_new_collection') %}
+            <span class="badge" style="background:rgba(188,140,255,.15);color:#bc8cff;margin-top:4px;">new</span>
+            {% endif %}
+          </td>
+          <td class="text-gray-300 text-xs font-mono">{{ p.get('source_site') or '-' }}</td>
+          <td class="text-gray-400 text-xs">{{ (p.get('category') or '-')[:20] }}</td>
+          <td class="text-gray-400 text-xs">{{ (p.get('collection') or '-')[:20] }}</td>
+          <td>
+            {% if p.get('current_price') %}
+            <span class="text-white font-medium">₪{{ p.current_price | int }}</span>
+            {% if p.get('original_price') and p.original_price != p.current_price %}
+            <span class="text-gray-500 text-xs line-through ml-1">₪{{ p.original_price | int }}</span>
+            {% endif %}
+            {% else %}
+            <span class="text-gray-600">-</span>
+            {% endif %}
+          </td>
+          <td>
+            {% set ss = p.get('stock_status', 'unknown') %}
+            {% if ss == 'in_stock' %}
+            <span class="text-green-400 text-xs">● in stock</span>
+            {% elif ss == 'out_of_stock' %}
+            <span class="text-red-400 text-xs">● out</span>
+            {% elif ss == 'low_stock' %}
+            <span class="text-yellow-400 text-xs">● low</span>
+            {% else %}
+            <span class="text-gray-600 text-xs">-</span>
+            {% endif %}
+          </td>
+          <td class="text-gray-400 text-xs">{{ (p.get('colors_available') or []) | length }}</td>
+          <td class="text-gray-400 text-xs">{{ (p.get('sizes_available') or []) | length }}</td>
+          <td class="{{ quality_color(qs) }} text-xs">{{ '%.0f%%' | format(qs * 100) if qs else '-' }}</td>
+          <td class="text-gray-600 text-xs tabular-nums">{{ ts_ago(p.get('last_seen_at')) }}</td>
+          <td>
+            <a href="/products/{{ p.get('product_id') }}" class="text-blue-400 hover:underline text-xs">→</a>
+          </td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="12" class="text-center text-gray-600 py-12">
+            {% if db_available %}
+            No products found with current filters
+            {% else %}
+            Firestore not connected
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
