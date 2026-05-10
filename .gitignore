@@ -1,6 +1,13 @@
 # Secrets — never commit these!
 config.env
 config/firebase_credentials.json
+.env
+
+# Arcads — generated/personal files
+MASTER_CONTEXT.md
+references/
+.claude/skills/
+.cursor/skills/
 
 # Python
 venv/
